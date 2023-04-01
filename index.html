@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="script.js" defer></script>
+    <script src="https://unpkg.com/konva@8/konva.min.js"></script>
+
   </head>
   <body>
     <div class="container">
@@ -35,15 +37,20 @@
         <div class="row">
           <label class="title">Options</label>
           <ul class="options">
-            <li class="option active tool" id="brush" class="brush">
-              <input type="radio" name="normal-brush" id="brush-checkbox">
+            <li class="option active tool" id="brush" class="brush" checked="true">
+              <!-- <input type="radio" name="normal-brush" id="brush-checkbox"> -->
               <img src="icons/brush.svg" alt="">
               <span>Brush</span>
             </li>
-            <li class="option active tool" id="smooth-brush" class="brush">
-              <input type="radio" name="normal-brush" id="smooth-brush-checkbox">
+            <li class="option tool" id="smooth-brush" class="brush">
+              <!-- <input type="radio" name="normal-brush" id="smooth-brush-checkbox"> -->
               <img src="icons/brush.svg" alt="">
               <span>Smooth Brush</span>
+            </li>
+            <li class="selectedArea" >
+              <!-- <input type="radio" name="normal-brush" id="smooth-brush-checkbox"> -->
+              <img src="icons/brush.svg" alt="">
+              <span>Select Area</span>
             </li>
             <li class="option tool" id="eraser">
               <img src="icons/eraser.svg" alt="">

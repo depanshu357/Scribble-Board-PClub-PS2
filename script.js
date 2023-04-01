@@ -6,10 +6,11 @@ colorBtns = document.querySelectorAll(".colors .option"),
 colorPicker = document.querySelector("#color-picker"),
 clearCanvas = document.querySelector(".clear-canvas"),
 saveImg = document.querySelector(".save-img"),
+selectedArea = document.querySelector(".selectedArea")
 ctx = canvas.getContext("2d");
 
-
-console.log(ctx)
+var points = []
+// console.log(ctx)
 // global variables with default value
 let prevMouseX, prevMouseY, snapshot,
 isDrawing = false,
@@ -63,15 +64,7 @@ const startDraw = (e) => {
     prevMouseX = e.offsetX; // passing current mouseX position as prevMouseX value
     prevMouseY = e.offsetY; // passing current mouseY position as prevMouseY value
     ctx.lineWidth = 10;
-    if(document.getElementById('smooth-brush').checked) {
-      ctx.lineJoin = ctx.lineCap = 'round';
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = 'rgb(0, 0, 0)';
-        //Male radio button is checked
-      }
-    // else if(document.getElementById('gender_Female').checked) {
-    //     //Female radio button is checked
-    //   }
+
     ctx.beginPath(); // creating new path to draw
     ctx.lineWidth = brushWidth; // passing brushSize as line width
     ctx.strokeStyle = selectedColor; // passing selectedColor as stroke style
@@ -88,11 +81,13 @@ const drawing = (e) => {
         // if selected tool is eraser then set strokeStyle to white 
         // to paint white color on to the existing canvas content else set the stroke color to selected color
         ctx.strokeStyle = selectedTool === "eraser" ? "#fff" : selectedColor;
+      ctx.shadowBlur = 0;
         ctx.lineTo(e.offsetX, e.offsetY); // creating line according to the mouse pointer
         ctx.stroke(); // drawing/filling line with color
     } else if(selectedTool === "rectangle"){
         drawRect(e);
     } else if(selectedTool === "circle"){
+    // ctx.fillStyle = selectedColor; // passing selectedColor as fill style
         drawCircle(e);
     } else if(selectedTool == "triangle") {
         drawTriangle(e);
@@ -103,6 +98,8 @@ const drawing = (e) => {
       ctx.shadowBlur = 10;
       ctx.shadowColor = 'rgb(0, 0, 0)';
         ctx.stroke(); // drawing/filling line with color
+        
+    }else if(selectedTool=="selectArea"){
         
     }
 }
@@ -138,6 +135,10 @@ clearCanvas.addEventListener("click", () => {
     ctx.clearRect(0, 0, canvas.width, canvas.height); // clearing whole canvas
     setCanvasBackground();
 });
+
+selectedArea.addEventListener("click",()=>{
+    
+})
 
 saveImg.addEventListener("click", () => {
     const link = document.createElement("a"); // creating <a> element
