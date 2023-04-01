@@ -78,6 +78,20 @@
                         });
                         canvas.add(rect);
                     }
+                    function onMouseMoveRectangle(o) {
+                        if (!isDown) return;
+                        // cosoe
+                        var pointer = canvas.getPointer(o.e);
+                        if (origX > pointer.x) {
+                            rect.set({ left: Math.abs(pointer.x) });
+                        }
+                        if (origY > pointer.y) {
+                            rect.set({ top: Math.abs(pointer.y) });
+                        }
+                        rect.set({ width: Math.abs(origX - pointer.x) });
+                        rect.set({ height: Math.abs(origY - pointer.y) });
+                        canvas.renderAll();
+                    }          
         let erasingRemovesErasedObjects = false;
         function changeAction(target) {
             canvas.removeEventListener('mouse:up',rectangle)
