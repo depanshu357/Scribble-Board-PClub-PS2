@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=
-    , initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Document</title>
     <style>
         button.active {
@@ -26,6 +26,7 @@
         <button id="draw" type="button" onclick="changeAction(this)">draw</button>
         <button id="spray" type="button" onclick="changeAction(this)">spray</button>
         <button id="rectangle" type="button" onclick="changeAction(this)">rectangle</button>
+        <button id="circle" type="button" onclick="changeAction(this)">circle</button>
     </div>
     <div>
         <div>
@@ -56,9 +57,119 @@
         </div>
     </div>
     <script>
+        var rect, isDown, origX, origY;
+        const canvas = this.__canvas = new fabric.Canvas('c');
+        setInterval(() => {
+            
+            var selectedObject = canvas.getActiveObject();
+        if (selectedObject) {
+        // An object is selected
+        console.log(selectedObject);
+        } else {
+        // No object is selected
+        }
+}, 1000);
+
+
+function onMouseDownRectangle(o) {
+            console.log(selectedObject);
+            isDown = true;
+            var pointer = canvas.getPointer(o.e);
+            origX = pointer.x;
+            origY = pointer.y;
+            var pointer = canvas.getPointer(o.e);
+            canvas.isDrawingMode = false
+            rect = new fabric.Rect({
+                left: origX,
+                top: origY,
+                originX: 'left',
+                originY: 'top',
+                width: pointer.x - origX,
+                height: pointer.y - origY,
+                angle: 0,
+                fill: 'rgba(255,0,0,0.5)',
+                transparentCorners: false
+            });
+            canvas.add(rect);
+        }
+
+        function onMouseMoveRectangle(o) {
+            if (!isDown) return;
+            // cosoe
+            var pointer = canvas.getPointer(o.e);
+            canvas.isDrawingMode = false
+            if (origX > pointer.x) {
+                rect.set({ left: Math.abs(pointer.x) });
+            }
+            if (origY > pointer.y) {
+                rect.set({ top: Math.abs(pointer.y) });
+            }
+            rect.set({ width: Math.abs(origX - pointer.x) });
+            rect.set({ height: Math.abs(origY - pointer.y) });
+            canvas.renderAll();
+        }
+
+        function onMouseUpRectangle(o) {
+            isDown = false;
+        }
+
+
+        function onMouseDownCircle(o) {
+            isDown = true;
+            var pointer = canvas.getPointer(o.e);
+            origX = pointer.x;
+            origY = pointer.y;
+            canvas.isDrawingMode=false;
+            circle = new fabric.Circle({
+                left: origX,
+                top: origY,
+                originX: 'left',
+                originY: 'top',
+                radius: pointer.x - origX,
+                angle: 0,
+                fill: '',
+                stroke: 'red',
+                strokeWidth: 3,
+            });
+            canvas.add(circle);
+        }
+        function onMouseMoveCircle(o) {
+            if (!isDown) return;
+            var pointer = canvas.getPointer(o.e);
+            canvas.isDrawingMode=false;
+            var radius = Math.max(Math.abs(origY - pointer.y), Math.abs(origX - pointer.x)) / 2;
+            if (radius > circle.strokeWidth) {
+                radius -= circle.strokeWidth / 2;
+            }
+            circle.set({ radius: radius });
+            if (origX > pointer.x) {
+                circle.set({ originX: 'right' });
+            } else {
+                circle.set({ originX: 'left' });
+            }
+            if (origY > pointer.y) {
+                circle.set({ originY: 'bottom' });
+            } else {
+                circle.set({ originY: 'top' });
+            }
+            canvas.renderAll();
+        }
+        function onMouseUpCircle(o) {
+            isDown = false;
+            isDrawingMode=true;
+        }
         let erasingRemovesErasedObjects = false;
+
         function changeAction(target) {
-            ['select', 'erase', 'undo', 'draw', 'spray','rectangle'].forEach(action => {
+            // canvas.off('mouse:down', onMouseDownRectangle,onMouseDownCircle)
+            // canvas.off('mouse:move', onMouseMoveRectangle,onMouseMoveCircle)
+            // canvas.off('mouse:up', onMouseUpRectangle,onMouseUpCircle)
+
+            canvas.off('mouse:down')
+            canvas.off('mouse:move')
+            canvas.off('mouse:up')
+            const types = ['select', 'erase', 'undo', 'draw', 'spray', 'rectangle', 'circle']
+            types.forEach(action => {
                 const t = document.getElementById(action);
                 t.classList.remove('active');
             });
@@ -67,6 +178,10 @@
             switch (target.id) {
                 case "select":
                     canvas.isDrawingMode = false;
+                    break;
+                case "fill":
+                    canvas.isDrawingMode = false;
+
                     break;
                 case "erase":
                     canvas.freeDrawingBrush = new fabric.EraserBrush(canvas);
@@ -89,50 +204,29 @@
                     canvas.freeDrawingBrush.width = 35;
                     canvas.isDrawingMode = true;
                     break;
+                case "circle":
+                        canvas.on('mouse:down', onMouseDownCircle);
+                        canvas.on('mouse:move', onMouseMoveCircle);
+                        canvas.on('mouse:up', onMouseUpCircle);
+                        canvas.isDrawingMode = true;
+                        break;
                 case "rectangle":
-                    var rect, isDown, origX, origY;
-                    canvas.on('mouse:down', function (o) {
-                        isDown = true;
-                        var pointer = canvas.getPointer(o.e);
-                        origX = pointer.x;
-                        origY = pointer.y;
-                        var pointer = canvas.getPointer(o.e);
-                        rect = new fabric.Rect({
-                            left: origX,
-                            top: origY,
-                            originX: 'left',
-                            originY: 'top',
-                            width: pointer.x - origX,
-                            height: pointer.y - origY,
-                            angle: 0,
-                            fill: 'rgba(255,0,0,0.5)',
-                            transparentCorners: false
-                        });
-                        canvas.add(rect);
-                    });
-                    canvas.on('mouse:move', function (o) {
-                        if (!isDown) return;
-                        // cosoe
-                        var pointer = canvas.getPointer(o.e);
-                        if (origX > pointer.x) {
-                            rect.set({ left: Math.abs(pointer.x) });
-                        }
-                        if (origY > pointer.y) {
-                            rect.set({ top: Math.abs(pointer.y) });
-                        }
-                        rect.set({ width: Math.abs(origX - pointer.x) });
-                        rect.set({ height: Math.abs(origY - pointer.y) });
-                        canvas.renderAll();
-                    });
-                    canvas.on('mouse:up', function (o) {
-                        isDown = false;
-                    });
+                    // var rect, isDown, origX, origY;
+                    canvas.on('mouse:down', onMouseDownRectangle);
+                    canvas.on('mouse:move', onMouseMoveRectangle);
+                    canvas.on('mouse:up', onMouseUpRectangle);
+                    function onObjectSelected(e) {
+  console.log(e.target.get('type'));
+}
+canvas.on('object:selected', onObjectSelected);
+                    
                     canvas.isDrawingMode = true;
                     break;
                 default:
                     break;
             }
         }
+
         function init() {
             canvas.setOverlayColor("rgba(0,0,255,0.4)", undefined, { erasable: false });
             const t = new fabric.Triangle({
@@ -166,68 +260,71 @@
                     new fabric.Circle({ top: 140, left: 230, radius: 75, fill: "green" })
                 ], { erasable: 'deep' })
             );
-            fabric.Image.fromURL('https://ip.webmasterapi.com/api/imageproxy/http://fabricjs.com/assets/mononoke.jpg',
-                function (img) {
-                    // img.set("erasable", false);
-                    img.scaleToWidth(480);
-                    img.clone((img) => {
-                        canvas.add(
-                            img
-                                .set({
-                                    left: 400,
-                                    top: 350,
-                                    clipPath: new fabric.Circle({
-                                        radius: 200,
-                                        originX: "center",
-                                        originY: "center"
-                                    }),
-                                    angle: 30
-                                })
-                                .scale(0.25)
-                        );
-                        canvas.renderAll();
-                    });
+            // fabric.Image.fromURL('https://ip.webmasterapi.com/api/imageproxy/http://fabricjs.com/assets/mononoke.jpg',
+            //     function (img) {
+            //         // img.set("erasable", false);
+            //         img.scaleToWidth(480);
+            //         img.clone((img) => {
+            //             canvas.add(
+            //                 img
+            //                     .set({
+            //                         left: 400,
+            //                         top: 350,
+            //                         clipPath: new fabric.Circle({
+            //                             radius: 200,
+            //                             originX: "center",
+            //                             originY: "center"
+            //                         }),
+            //                         angle: 30
+            //                     })
+            //                     .scale(0.25)
+            //             );
+            //             canvas.renderAll();
+            //         });
 
-                    img.set({ opacity: 0.7 });
-                    function animate() {
-                        img.animate("opacity", img.get("opacity") === 0.7 ? 0.4 : 0.7, {
-                            duration: 1000,
-                            onChange: canvas.renderAll.bind(canvas),
-                            onComplete: animate
-                        });
-                    }
-                    animate();
-                    canvas.setBackgroundImage(img);
-                    img.set({ erasable: false });
-                    canvas.on("erasing:end", ({ targets, drawables }) => {
-                        var output = document.getElementById("output");
-                        output.innerHTML = JSON.stringify({
-                            objects: targets.map((t) => t.type),
-                            drawables: Object.keys(drawables)
-                        }, null, '\t');
-                        if (erasingRemovesErasedObjects) {
-                            targets.forEach(obj => obj.group?.removeWithUpdate(obj) || canvas.remove(obj));
-                        }
-                    })
-                    canvas.renderAll();
-                },
-                { crossOrigin: "anonymous" }
-            );
+            //         img.set({ opacity: 0.7 });
 
-            function animate() {
-                try {
-                    canvas
-                        .item(0)
-                        .animate("top", canvas.item(0).get("top") === 500 ? "100" : "500", {
-                            duration: 1000,
-                            onChange: canvas.renderAll.bind(canvas),
-                            onComplete: animate
-                        });
-                } catch (error) {
-                    setTimeout(animate, 500);
-                }
-            }
-            animate();
+            //         function animate() {
+            //             img.animate("opacity", img.get("opacity") === 0.7 ? 0.4 : 0.7, {
+            //                 duration: 1000,
+            //                 onChange: canvas.renderAll.bind(canvas),
+            //                 onComplete: animate
+            //             });
+            //         }
+
+            //         animate();
+            //         canvas.setBackgroundImage(img);
+            //         img.set({ erasable: false });
+            //         canvas.on("erasing:end", ({ targets, drawables }) => {
+            //             var output = document.getElementById("output");
+            //             output.innerHTML = JSON.stringify({
+            //                 objects: targets.map((t) => t.type),
+            //                 drawables: Object.keys(drawables)
+            //             }, null, '\t');
+            //             if (erasingRemovesErasedObjects) {
+            //                 targets.forEach(obj => obj.group?.removeWithUpdate(obj) || canvas.remove(obj));
+            //             }
+            //         })
+            //         canvas.renderAll();
+            //     },
+            //     { crossOrigin: "anonymous" }
+            // );
+
+            // function animate() {
+            //     try {
+            //         canvas
+            //             .item(0)
+            //             .animate("top", canvas.item(0).get("top") === 500 ? "100" : "500", {
+            //                 duration: 1000,
+            //                 onChange: canvas.renderAll.bind(canvas),
+            //                 onComplete: animate
+            //             });
+            //     } catch (error) {
+            //         setTimeout(animate, 500);
+            //     }
+            // }
+
+            // animate();
         }
 
         const setDrawableErasableProp = (drawable, value) => {
@@ -284,7 +381,6 @@
             a.click();
             URL.revokeObjectURL(blobURL);
         };
-        const canvas = this.__canvas = new fabric.Canvas('c');
         init();
         changeAction('erase');
 
