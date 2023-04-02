@@ -114,8 +114,99 @@ function onMouseUpCircle(o) {
   isDown = false;
   isDrawingMode = true;
 }
-let erasingRemovesErasedObjects = false;
 
+var tri;
+
+function onMouseDownTriangle(o){
+  isDown = true;
+  canvas.isDrawingMode = false;
+  var pointer = canvas.getPointer(o.e);
+  origX = pointer.x;
+  origY = pointer.y;
+  tri = new fabric.Triangle({
+    left: pointer.x,
+    top: pointer.y,
+    strokeWidth: 1,
+    width:2,height:2,
+    stroke: canvas.freeDrawingBrush.color,
+    fill:fillValue,
+    selectable: true,
+    originX: 'center'
+  })
+  canvas.add(tri)
+}
+
+function onMouseMoveTriangle(o){
+  if (!isDown) return;
+  canvas.isDrawingMode = false;
+  var pointer = canvas.getPointer(o.e);
+    tri.set({ width: Math.abs(origX - pointer.x),height: Math.abs(origY - pointer.y)});
+    // console.log("isMoving")
+  canvas.renderAll();
+}
+
+function onMouseUpTriangle(o){
+  isDown = false;
+  canvas.isDrawingMode = true;
+}
+
+
+var marq_rect, marqer;
+function onMouseDownClip(o){
+  isDown = true;
+    canvas.set({ 'selection': false });
+    var pointer = canvas.getPointer(o.e);
+    origX = pointer.x;
+    origY = pointer.y;
+  canvas.isDrawingMode = false;
+
+    var pointer = canvas.getPointer(o.e);
+    marq_rect = new fabric.Rect({
+        left: origX,
+        top: origY,
+        originX: 'left',
+        originY: 'top',
+        width: pointer.x - origX,
+        height: pointer.y - origY,
+        angle: 0,
+        fill: 'transparent',
+        stroke: 'black',
+        strokeDashArray: [2, 2],
+        strokeDashOffset: 20,
+        strokeWidth: 2,
+        transparentCorners: false,
+        id: 'marq_rect'
+      });
+      canvas.add(marq_rect);
+}
+function onMouseMoveClip(o){
+  if (!isDown) return;
+  var pointer = canvas.getPointer(o.e);
+  canvas.isDrawingMode = false;
+
+
+  if (origX > pointer.x) {
+      marq_rect.set({ left: Math.abs(pointer.x) });
+  }
+  if (origY > pointer.y) {
+      marq_rect.set({ top: Math.abs(pointer.y) });
+  }
+
+  marq_rect.set({ width: Math.abs(origX - pointer.x) });
+  marq_rect.set({ height: Math.abs(origY - pointer.y) });
+  
+  canvas.requestRenderAll();
+}
+function onMouseUpClip(o){
+  isDown = false;
+  canvas.isDrawingMode = true;
+     canvas.set({ 'selection': true });
+    //  canvas.clipPath = marq_rect;
+    //  bg_image.clipPath = marq_rect;
+  canvas.requestRenderAll();
+}
+
+let erasingRemovesErasedObjects = false;
 drawingLineWidthEl = document.getElementById("drawing-line-width");
 drawingLineWidthEl.onchange = function () {
   canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 30;
@@ -221,9 +312,9 @@ hLinePatternBrush.getPatternSrc = function () {
   });
 
 function changeAction(target) {
-  canvas.off('mouse:down', onMouseDownRectangle,onMouseDownCircle)
-  canvas.off('mouse:move', onMouseMoveRectangle,onMouseMoveCircle)
-  canvas.off('mouse:up', onMouseUpRectangle,onMouseUpCircle)
+  // canvas.off('mouse:down', onMouseDownRectangle,onMouseDownCircle,onMouseDownClip)
+  // canvas.off('mouse:move', onMouseMoveRectangle,onMouseMoveCircle,onMouseMoveClip)
+  // canvas.off('mouse:up', onMouseUpRectangle,onMouseUpCircle,onMouseUpClip)
 
   canvas.off("mouse:down"); // remove all event listeners
   canvas.off("mouse:move");
@@ -236,6 +327,8 @@ function changeAction(target) {
     "spray",
     "rectangle",
     "circle",
+    "triangle",
+    "clip",
   ];
   types.forEach((action) => {
     const t = document.getElementById(action);
@@ -277,19 +370,31 @@ function changeAction(target) {
       canvas.on("mouse:down", onMouseDownCircle);
       canvas.on("mouse:move", onMouseMoveCircle);
       canvas.on("mouse:up", onMouseUpCircle);
-      canvas.isDrawingMode = true;
+      canvas.isDrawingMode = false;
       break;
     case "rectangle":
       // var rect, isDown, origX, origY;
       canvas.on("mouse:down", onMouseDownRectangle);
       canvas.on("mouse:move", onMouseMoveRectangle);
       canvas.on("mouse:up", onMouseUpRectangle);
-      function onObjectSelected(e) {
-        console.log(e.target.get("type"));
-      }
-      canvas.on("object:selected", onObjectSelected);
+      // function onObjectSelected(e) {
+      //   console.log(e.target.get("type"));
+      // }
+      // canvas.on("object:selected", onObjectSelected);
 
-      canvas.isDrawingMode = true;
+      canvas.isDrawingMode = false;
+      break;
+    case "triangle":
+      canvas.on("mouse:down",onMouseDownTriangle)
+      canvas.on("mouse:move",onMouseMoveTriangle)
+      canvas.on("mouse:up",onMouseUpTriangle)
+      canvas.isDrawingMode = false;
+      break;
+    case "clip":
+      canvas.on("mouse:down",onMouseDownClip)
+      canvas.on("mouse:move",onMouseMoveClip)
+      canvas.on("mouse:up",onMouseUpClip)
+      canvas.isDrawingMode = false;
       break;
     default:
       break;
