@@ -85,7 +85,7 @@
   
       var diamondPatternBrush = new fabric.PatternBrush(canvas);
       diamondPatternBrush.getPatternSrc = function() {
-  
+
         var squareWidth = 10, squareDistance = 5;
         var patternCanvas = fabric.document.createElement('canvas');
         var rect = new fabric.Rect({
