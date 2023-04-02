@@ -7,7 +7,7 @@
     });
   
     fabric.Object.prototype.transparentCorners = false;
-  
+   
     var drawingModeEl = document.getElementById('drawing-mode'),
         drawingOptionsEl = document.getElementById('drawing-mode-options'),
         drawingColorEl = document.getElementById('drawing-color'),

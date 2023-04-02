@@ -12,6 +12,10 @@
             background: limegreen;
             font-weight: bold
         }
+
+        canvas {
+            border: 2px solid red;
+        }
     </style>
     <!-- <script src="fabric.min.js"></script> -->
     <script src="https://unpkg.com/fabric@latest/dist/fabric.js"></script>
@@ -28,7 +32,17 @@
         <button id="rectangle" type="button" onclick="changeAction(this)">rectangle</button>
         <button id="circle" type="button" onclick="changeAction(this)">circle</button>
     </div>
+
     <div>
+        <div>
+
+            <label for="drawing-line-width">Line width:</label>
+            <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+        </div>
+        <div>
+            <label for="drawing-color">Line color:</label>
+            <input type="color" value="#005E7A" id="drawing-color"><br>
+        </div>
         <div>
             <label for="a">
                 background image <code>erasable</code>
@@ -46,6 +60,22 @@
         <button type="button" onclick="toJSON()">toJSON</button>
         <button type="button" onclick="downloadImage()">to Image</button>
         <button type="button" onclick="downloadSVG()">toSVG</button>
+        <button id="clear-canvas" class="btn btn-info">Clear</button><br>
+        <label for="drawing-mode-selector">Mode:</label>
+        <select id="drawing-mode-selector">
+            <option>Pencil</option>
+            <option>Circle</option>
+            <option>Spray</option>
+            <option>Pattern</option>
+            <option>Marker</option>
+            <option>Calligraphy</option>
+
+            <option>hline</option>
+            <option>vline</option>
+            <option>square</option>
+            <option>diamond</option>
+            <option>texture</option>
+        </select><br>
     </div>
     <div style="display:flex;flex-direction:row;">
         <div>
@@ -60,18 +90,18 @@
         var rect, isDown, origX, origY;
         const canvas = this.__canvas = new fabric.Canvas('c');
         setInterval(() => {
-            
+
             var selectedObject = canvas.getActiveObject();
-        if (selectedObject) {
-        // An object is selected
-        console.log(selectedObject);
-        } else {
-        // No object is selected
-        }
-}, 1000);
+            if (selectedObject) {
+                // An object is selected
+                console.log(selectedObject);
+            } else {
+                // No object is selected
+            }
+        }, 1000);
 
 
-function onMouseDownRectangle(o) {
+        function onMouseDownRectangle(o) {
             console.log(selectedObject);
             isDown = true;
             var pointer = canvas.getPointer(o.e);
@@ -119,7 +149,7 @@ function onMouseDownRectangle(o) {
             var pointer = canvas.getPointer(o.e);
             origX = pointer.x;
             origY = pointer.y;
-            canvas.isDrawingMode=false;
+            canvas.isDrawingMode = false;
             circle = new fabric.Circle({
                 left: origX,
                 top: origY,
@@ -136,7 +166,7 @@ function onMouseDownRectangle(o) {
         function onMouseMoveCircle(o) {
             if (!isDown) return;
             var pointer = canvas.getPointer(o.e);
-            canvas.isDrawingMode=false;
+            canvas.isDrawingMode = false;
             var radius = Math.max(Math.abs(origY - pointer.y), Math.abs(origX - pointer.x)) / 2;
             if (radius > circle.strokeWidth) {
                 radius -= circle.strokeWidth / 2;
@@ -156,9 +186,87 @@ function onMouseDownRectangle(o) {
         }
         function onMouseUpCircle(o) {
             isDown = false;
-            isDrawingMode=true;
+            isDrawingMode = true;
         }
         let erasingRemovesErasedObjects = false;
+
+        drawingLineWidthEl = document.getElementById('drawing-line-width')
+        drawingLineWidthEl.onchange = function () {
+            canvas.freeDrawingBrush.width = parseInt(this.value, 10) || 30;
+            this.previousSibling.innerHTML = this.value;
+        };
+
+        drawingColorEl = document.getElementById('drawing-color')
+        drawingColorEl.onchange = function () {
+            var brush = canvas.freeDrawingBrush;
+            brush.color = this.value;
+            //   if (brush.getPatternSrc) {
+            //     brush.source = brush.getPatternSrc.call(brush);
+            //   }
+        };
+
+        clearEl = document.getElementById('clear-canvas');
+        clearEl.onclick = function () { canvas.clear() };
+
+        drawingOptionsEl = document.getElementById('drawing-mode-options'),
+            document.getElementById('drawing-mode-selector').onchange = function () {
+
+                if (this.value === 'hline') {
+                    canvas.freeDrawingBrush = vLinePatternBrush;
+                }
+                else if (this.value === 'vline') {
+                    canvas.freeDrawingBrush = hLinePatternBrush;
+                }
+                else if (this.value === 'square') {
+                    canvas.freeDrawingBrush = squarePatternBrush;
+                }
+                else if (this.value === 'diamond') {
+                    canvas.freeDrawingBrush = diamondPatternBrush;
+                }
+                else if (this.value === 'texture') {
+                    canvas.freeDrawingBrush = texturePatternBrush;
+                }
+                // else if (this.value === 'Calligraphy') {
+                //     // canvas.freeDrawingBrush = new fabric['calligraphyBrush'](canvas)
+                //     const calligraphyBrush = new fabric.CalligraphyBrush(canvas);
+                //     // calligraphyBrush.color = "#000000"; // set color to black
+                //     calligraphyBrush.width = 5; // set stroke width to 5 pixels
+                //     console.log(clicked)
+
+                //     canvas.isDrawingMode = true;
+                //     canvas.freeDrawingBrush = calligraphyBrush;
+                // }
+                else if (this.value === 'Marker') {
+                    const markerBrush = new fabric.MarkerBrush(canvas);
+                    markerBrush.color = "#000000"; // set color to black
+                    markerBrush.width = 20; // set stroke width to 20 pixels
+                    markerBrush.strokeLineCap = "round"; // set line cap to round
+
+                    canvas.isDrawingMode = true;
+                    canvas.freeDrawingBrush = markerBrush;
+                }
+                else {
+                    console.log(this.value)
+                    canvas.freeDrawingBrush = new fabric[this.value + 'Brush'](canvas);
+                }
+
+                if (canvas.freeDrawingBrush) {
+                    var brush = canvas.freeDrawingBrush;
+                    brush.color = drawingColorEl.value;
+                    // if (brush.getPatternSrc) {
+                    //     brush.source = brush.getPatternSrc.call(brush);
+                    // }
+                    brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+                    // brush.shadow = new fabric.Shadow({
+                    //     blur: parseInt(drawingShadowWidth.value, 10) || 0,
+                    //     offsetX: 0,
+                    //     offsetY: 0,
+                    //     affectStroke: true,
+                    //     color: drawingShadowColorEl.value,
+                    // });
+                }
+            };
+
 
         function changeAction(target) {
             // canvas.off('mouse:down', onMouseDownRectangle,onMouseDownCircle)
@@ -197,6 +305,7 @@ function onMouseDownRectangle(o) {
                 case "draw":
                     canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
                     canvas.freeDrawingBrush.width = 35;
+                    canvas.freeDrawingBrush.color = "green"
                     canvas.isDrawingMode = true;
                     break;
                 case "spray":
@@ -205,21 +314,21 @@ function onMouseDownRectangle(o) {
                     canvas.isDrawingMode = true;
                     break;
                 case "circle":
-                        canvas.on('mouse:down', onMouseDownCircle);
-                        canvas.on('mouse:move', onMouseMoveCircle);
-                        canvas.on('mouse:up', onMouseUpCircle);
-                        canvas.isDrawingMode = true;
-                        break;
+                    canvas.on('mouse:down', onMouseDownCircle);
+                    canvas.on('mouse:move', onMouseMoveCircle);
+                    canvas.on('mouse:up', onMouseUpCircle);
+                    canvas.isDrawingMode = true;
+                    break;
                 case "rectangle":
                     // var rect, isDown, origX, origY;
                     canvas.on('mouse:down', onMouseDownRectangle);
                     canvas.on('mouse:move', onMouseMoveRectangle);
                     canvas.on('mouse:up', onMouseUpRectangle);
                     function onObjectSelected(e) {
-  console.log(e.target.get('type'));
-}
-canvas.on('object:selected', onObjectSelected);
-                    
+                        console.log(e.target.get('type'));
+                    }
+                    canvas.on('object:selected', onObjectSelected);
+
                     canvas.isDrawingMode = true;
                     break;
                 default:
@@ -228,7 +337,17 @@ canvas.on('object:selected', onObjectSelected);
         }
 
         function init() {
-            canvas.setOverlayColor("rgba(0,0,255,0.4)", undefined, { erasable: false });
+            // canvas.setOverlayColor("rgba(0,255,255,0.4)", undefined, { erasable: false });
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "rgba(0, 0, 255, 0.5)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Set overlay blending mode
+            ctx.globalCompositeOperation = "overlay";
+
+            // Draw overlay shape
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             const t = new fabric.Triangle({
                 top: 300,
                 left: 210,
