@@ -35,14 +35,18 @@
 
     <div>
         <div>
-
             <label for="drawing-line-width">Line width:</label>
             <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
         </div>
         <div>
             <label for="drawing-color">Line color:</label>
-            <input type="color" value="#005E7A" id="drawing-color"><br>
+            <input type="color" value="black" id="drawing-color"><br>
         </div>
+        <div>
+            <label for="drawing-color-fill">Fill color:</label>
+            <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+        </div>
+        
         <div>
             <label for="a">
                 background image <code>erasable</code>
@@ -57,11 +61,15 @@
         </div>
         <div>
             <label for="drawing-shadow-width">Shadow width:</label>
-          <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
-      </div>
-      <div>
-          <label for="drawing-shadow-offset">Shadow offset:</label>
-          <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+            <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
+        </div>
+        <div>
+            <label for="drawing-shadow-offset">Shadow offset:</label>
+            <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+        </div>
+        <div>
+            <label for="drawing-shadow-color">Shadow color:</label>
+            <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
         </div>
     </div>
     <div>
@@ -85,10 +93,7 @@
             <option>texture</option>
         </select><br>
     </div>
-    <div>
-        <label for="drawing-shadow-color">Shadow color:</label>
-        <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
-    </div>
+
     <div style="display:flex;flex-direction:row;">
         <div>
             <canvas id="c" width="500" height="620"></canvas>
@@ -99,7 +104,7 @@
         </div>
     </div>
     <script>
-       
+
     </script>
     <script src="fabric2.js"></script>
 

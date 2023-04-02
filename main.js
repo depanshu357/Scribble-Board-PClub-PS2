@@ -171,6 +171,7 @@
     };
     drawingShadowOffset.onchange = function() {
       canvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 0;
+      
       canvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 0;
       this.previousSibling.innerHTML = this.value;
     };
