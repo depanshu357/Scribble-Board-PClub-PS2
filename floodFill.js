@@ -104,7 +104,7 @@ drawingColorEl.onchange = function () {
   //   }
 };
 drawingColorFillEl.onchange = function(){
-  // fcanvas.freeDrawingBrush.color = parseInt(this.value, 10) || 30;
+  fcanvas.freeDrawingBrush.fillColor = parseInt(this.value, 10) || 30;
     fillValue = this.value;
 }
 var isDown;
@@ -239,7 +239,7 @@ clearEl.onclick = function () {
   fcanvas.clear();
 };
 
-
+var tempShadowColor;
  drawingShadowWidth = document.getElementById("drawing-shadow-width");
  drawingShadowOffset = document.getElementById("drawing-shadow-offset");
  drawingShadowColorEl = document.getElementById("drawing-shadow-color");
@@ -248,19 +248,68 @@ drawingShadowColorEl.onchange = function () {
   fcanvas.isDrawingMode = true
   // fcanvas.statefullCache = true;
   fcanvas.freeDrawingBrush.shadowColor = this.value;
+  tempShadowColor = this.value;
   console.log(fcanvas.freeDrawingBrush.shadowColor,"shadowColor")
+  if (fcanvas.freeDrawingBrush) {
+    var brush = fcanvas.freeDrawingBrush;
+    brush.color = drawingColorEl.value;
+    if (brush.getPatternSrc) {
+      brush.source = brush.getPatternSrc.call(brush);
+    }
+    brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+    console.log(tempShadowColor)
+    brush.shadow = new fabric.Shadow({
+      blur: parseInt(drawingShadowWidth.value, 10) || 0,
+      offsetX: 0,
+      offsetY: 0,
+      affectStroke: true,
+      color: document.getElementById('drawing-shadow-color').value,
+    });
+  }
 };
 
 drawingShadowWidth.onchange = function () {
       fcanvas.freeDrawingBrush.shadowBlur = parseInt(this.value, 10) || 30;
     this.previousSibling.innerHTML = this.value;
     console.log(fcanvas.freeDrawingBrush.shadowBlur)
+    if (fcanvas.freeDrawingBrush) {
+      var brush = fcanvas.freeDrawingBrush;
+      brush.color = drawingColorEl.value;
+      if (brush.getPatternSrc) {
+        brush.source = brush.getPatternSrc.call(brush);
+      }
+      brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+      console.log(tempShadowColor)
+      brush.shadow = new fabric.Shadow({
+        blur: parseInt(drawingShadowWidth.value, 10) || 0,
+        offsetX: 0,
+        offsetY: 0,
+        affectStroke: true,
+        color: document.getElementById('drawing-shadow-color').value,
+      });
+    }
 //   console.log(this)
 };
 drawingShadowOffset.onchange = function () {
   fcanvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 30;
   fcanvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 30;
   this.previousSibling.innerHTML = this.value;
+  if (fcanvas.freeDrawingBrush) {
+    var brush = fcanvas.freeDrawingBrush;
+    brush.color = drawingColorEl.value;
+    if (brush.getPatternSrc) {
+      brush.source = brush.getPatternSrc.call(brush);
+    }
+    brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+    console.log(tempShadowColor)
+    brush.shadow = new fabric.Shadow({
+      blur: parseInt(drawingShadowWidth.value, 10) || 0,
+      offsetX: 0,
+      offsetY: 0,
+      affectStroke: true,
+      color: document.getElementById('drawing-shadow-color').value,
+    });
+  }
 };
 
 // var drawingOptionsEl = document.getElementById("drawing-mode-options")
@@ -305,12 +354,13 @@ document.getElementById("drawing-mode-selector").onchange = function () {
           brush.source = brush.getPatternSrc.call(brush);
         }
         brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+        console.log(tempShadowColor)
         brush.shadow = new fabric.Shadow({
           blur: parseInt(drawingShadowWidth.value, 10) || 0,
           offsetX: 0,
           offsetY: 0,
           affectStroke: true,
-          color: drawingShadowColorEl.value,
+          color: document.getElementById('drawing-shadow-color').value,
         });
       }
     }
