@@ -91,6 +91,45 @@ button.active {
                 </td>
             </tr>
         </table>
+        <div>
+            <div>
+                <label for="drawing-line-width">Line width:</label>
+                <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+            </div>
+            <div>
+                <label for="drawing-color">Line color:</label>
+                <input type="color" value="black" id="drawing-color"><br>
+            </div>
+            <div>
+                <label for="drawing-color-fill">Fill color:</label>
+                <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+            </div>
+    
+            <div>
+                <label for="a">
+                    background image <code>erasable</code>
+                </label>
+                <input id="a" type="checkbox" onchange="setBgImageErasableProp(this)">
+            </div>
+            <div>
+                <label for="b">
+                    remove erased objects on <code>erasing:end</code>
+                </label>
+                <input id="b" type="checkbox" onchange="setErasingRemovesErasedObjects(this)">
+            </div>
+            <div>
+                <label for="drawing-shadow-width">Shadow width:</label>
+                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
+            </div>
+            <div>
+                <label for="drawing-shadow-offset">Shadow offset:</label>
+                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+            </div>
+            <div>
+                <label for="drawing-shadow-color">Shadow color:</label>
+                <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
+            </div>
+        </div>
         <div class="controls">
             <button id="select" type="button" onclick="changeAction(this)">select</button>
             <button id="erase" type="button" onclick="changeAction(this)">erase</button>

@@ -5,6 +5,7 @@
  */
 
 var tempEnable = false;
+var fillValue;
 
 
 var FloodFill = {
@@ -94,13 +95,15 @@ function floodFill(enable) {
     fcanvas.forEachObject(function (object) {
       object.selectable = true;
     });
-    fcanvas.isDrawingMode = true;
-    fcanvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
-      fcanvas.freeDrawingBrush.width = 35;
-      fcanvas.freeDrawingBrush.color = "green";
-      fcanvas.isDrawingMode = true;
+    fcanvas.isDrawingMode = false
+    // fcanvas.isDrawingMode = true;
+    // fcanvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+    //   fcanvas.freeDrawingBrush.width = 35;
+    //   fcanvas.freeDrawingBrush.color = "green";
+    //   fcanvas.isDrawingMode = true;
     return;
   }
+  changeAction("select")
 
   fcanvas.discardActiveObject().renderAll(); // Hide object handles!
   fcanvas.selection = false;
@@ -244,39 +247,39 @@ function changeAction(target) {
       fcanvas.isDrawingMode = true;
       break;
     case "spray":
-      canvas.freeDrawingBrush = new fabric.SprayBrush(fcanvas);
-      canvas.freeDrawingBrush.width = 35;
-      canvas.isDrawingMode = true;
+      fcanvas.freeDrawingBrush = new fabric.SprayBrush(fcanvas);
+      fcanvas.freeDrawingBrush.width = 35;
+      fcanvas.isDrawingMode = true;
       break;
     case "circle":
-      canvas.on("mouse:down", onMouseDownCircle);
-      canvas.on("mouse:move", onMouseMoveCircle);
-      canvas.on("mouse:up", onMouseUpCircle);
-      canvas.isDrawingMode = false;
+      fcanvas.on("mouse:down", onMouseDownCircle);
+      fcanvas.on("mouse:move", onMouseMoveCircle);
+      fcanvas.on("mouse:up", onMouseUpCircle);
+      fcanvas.isDrawingMode = false;
       break;
     case "rectangle":
       // var rect, isDown, origX, origY;
-      canvas.on("mouse:down", onMouseDownRectangle);
-      canvas.on("mouse:move", onMouseMoveRectangle);
-      canvas.on("mouse:up", onMouseUpRectangle);
+      fcanvas.on("mouse:down", onMouseDownRectangle);
+      fcanvas.on("mouse:move", onMouseMoveRectangle);
+      fcanvas.on("mouse:up", onMouseUpRectangle);
       // function onObjectSelected(e) {
       //   console.log(e.target.get("type"));
       // }
       // canvas.on("object:selected", onObjectSelected);
 
-      canvas.isDrawingMode = false;
+      fcanvas.isDrawingMode = false;
       break;
     case "triangle":
-      canvas.on("mouse:down",onMouseDownTriangle)
-      canvas.on("mouse:move",onMouseMoveTriangle)
-      canvas.on("mouse:up",onMouseUpTriangle)
-      canvas.isDrawingMode = false;
+      fcanvas.on("mouse:down",onMouseDownTriangle)
+      fcanvas.on("mouse:move",onMouseMoveTriangle)
+      fcanvas.on("mouse:up",onMouseUpTriangle)
+      fcanvas.isDrawingMode = false;
       break;
     case "clip":
-      canvas.on("mouse:down",onMouseDownClip)
-      canvas.on("mouse:move",onMouseMoveClip)
-      canvas.on("mouse:up",onMouseUpClip)
-      canvas.isDrawingMode = false;
+      fcanvas.on("mouse:down",onMouseDownClip)
+      fcanvas.on("mouse:move",onMouseMoveClip)
+      fcanvas.on("mouse:up",onMouseUpClip)
+      fcanvas.isDrawingMode = false;
       break;
     default:
       break;
@@ -366,3 +369,5 @@ $("#tolerance").on("input", function () {
 
 
 });
+changeAction("select");
+
