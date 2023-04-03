@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body, input, button {
+	font: 12pt Arial, Helvetica;
+}
+
+#canvasContainer {
+	background-image: url(data:image/gif;base64,R0lGODlhCgAKAIAAAOLi4v///yH5BAAHAP8ALAAAAAAKAAoAAAIRhB2ZhxoM3GMSykqd1VltzxQAOw==);
+	border: 2px solid #ccc;
+	display: inline-block;
+}
+
+.intro {
+  background-color: #ddd;
+  border: 1px solid #333;
+  padding: 5px;
+}
+
+input[type=range], input[type=text] {
+	width: 200px;
+}
+
+input[type=radio] {
+	transform: scale(1.25);
+}
+
+div.color {
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	padding: 1px;
+	border: 1px solid #000;
+	cursor: pointer;
+}
+
+div.color.selected {
+	padding: 0;
+	border: 2px solid #000;
+    
+}
+button.active {
+            background: limegreen;
+            font-weight: bold
+        }
+    </style>
+        <script src="https://unpkg.com/fabric@latest/dist/fabric.js"></script>
+        <script src="https://unpkg.com/fabric@latest/src/mixins/eraser_brush.mixin.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+</head>
+<body>
+    <p class="intro">
+        Click <i>Flood fill</i>, then click anywhere in the image to flood fill the area under the cursor.<br>
+        Click <i>Default</i> to get default fabric.js behavior: you can select the flood-filled area as an (image) object now.<br>
+        You can (optionally) change fill color and fill tolerance.
+        </p>
+        <table cellpadding="6">
+            <tr>
+                <td>Mode</td>
+                <td>
+                    <input type="radio" name="mode" value="fabric" id="mode1" checked> <label for="mode1">Default</label>
+                    <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
+                </td>
+            </tr>
+            <tr>
+                <td>Color</td>
+                <td>
+                    <div class="color selected" data-color="#f00"></div>
+                    <div class="color" data-color="#0f0"></div>
+                    <div class="color" data-color="#00f"></div>
+                    <div class="color" data-color="#000"></div>
+                    <div class="color" data-color="#fff"></div>
+                    <div class="color" data-color="#0ff"></div>
+                    <div class="color" data-color="#f0f"></div>
+                    <div class="color" data-color="#ff0"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>Tolerance</td>
+                <td><input type="range" id="tolerance" min="0" max="50" value="2" step="1"></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <button type="button" id="removeObject">Remove object</button>
+                </td>
+            </tr>
+        </table>
+        <div class="controls">
+            <button id="select" type="button" onclick="changeAction(this)">select</button>
+            <button id="erase" type="button" onclick="changeAction(this)">erase</button>
+            <button id="undo" type="button" onclick="changeAction(this)">undo erasing</button>
+            <button id="draw" type="button" onclick="changeAction(this)">draw</button>
+            <button id="spray" type="button" onclick="changeAction(this)">spray</button>
+            <button id="rectangle" type="button" onclick="changeAction(this)">rectangle</button>
+            <button id="circle" type="button" onclick="changeAction(this)">circle</button>
+            <button id="triangle" type="button" onclick="changeAction(this)">triangle</button>
+            <button id="clip" type="button" onclick="changeAction(this)">clip</button>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="c" width="600" height="400"></canvas>
+        </div>
+        <script src="floodFillOriginal.js"></script>
+        <!-- <script src="floodFill.js"></script> -->
+</body>
+</html>

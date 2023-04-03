@@ -16,6 +16,20 @@
         canvas {
             border: 2px solid red;
         }
+
+        div.color {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            padding: 1px;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+
+        div.color.selected {
+            padding: 0;
+            border: 2px solid #000;
+        }
     </style>
     <!-- <script src="fabric.min.js"></script> -->
     <script src="https://unpkg.com/fabric@latest/dist/fabric.js"></script>
@@ -29,7 +43,8 @@
             <tr>
                 <td>Mode</td>
                 <td>
-                    <input type="radio" name="mode" value="fabric" id="mode1" checked> <label for="mode1">Default</label>
+                    <input type="radio" name="mode" value="fabric" id="mode1" checked> <label
+                        for="mode1">Default</label>
                     <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
                 </td>
             </tr>
@@ -83,7 +98,7 @@
             <label for="drawing-color-fill">Fill color:</label>
             <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
         </div>
-        
+
         <div>
             <label for="a">
                 background image <code>erasable</code>
@@ -144,7 +159,7 @@
 
     </script>
     <script src="fabric2.js"></script>
-    <script src="floodFill.js"></script>
+    <!-- <script src="floodFill.js"></script> -->
 
 </body>
 

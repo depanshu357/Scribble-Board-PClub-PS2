@@ -312,13 +312,11 @@ hLinePatternBrush.getPatternSrc = function () {
   });
 
 function changeAction(target) {
-  // canvas.off('mouse:down', onMouseDownRectangle,onMouseDownCircle,onMouseDownClip)
-  // canvas.off('mouse:move', onMouseMoveRectangle,onMouseMoveCircle,onMouseMoveClip)
-  // canvas.off('mouse:up', onMouseUpRectangle,onMouseUpCircle,onMouseUpClip)
 
   canvas.off("mouse:down"); // remove all event listeners
   canvas.off("mouse:move");
   canvas.off("mouse:up");
+  console.log(canvas)
   const types = [
     "select",
     "erase",
@@ -406,13 +404,11 @@ function init() {
   const ctx = canvas.getContext("2d");
   ctx.fillStyle = "rgba(0, 0, 0, 0)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-
   // Set overlay blending mode
   ctx.globalCompositeOperation = "overlay";
-
   // Draw overlay shape
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  fillValue = "#f7f7f700"
+  fillValue = "#1aff8c"
 }
 
 
@@ -469,4 +465,4 @@ const toJSON = async () => {
   URL.revokeObjectURL(blobURL);
 };
 init();
-changeAction("erase");
+changeAction("draw");
