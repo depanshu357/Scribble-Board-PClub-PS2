@@ -1,5 +1,7 @@
 var rect, isDown, origX, origY;
 const canvas = (this.__canvas = new fabric.Canvas("c"));
+canvas.statefullCache = true;
+canvas.dirty = true;
 setInterval(() => {
   var selectedObject = canvas.getActiveObject();
   if (selectedObject) {
@@ -14,6 +16,8 @@ drawingColorEl = document.getElementById("drawing-color");
 drawingColorEl.onchange = function () {
   var brush = canvas.freeDrawingBrush;
   brush.color = this.value;
+  console.log("changed")
+  // fillValue = this.value;
   //   if (brush.getPatternSrc) {
   //     brush.source = brush.getPatternSrc.call(brush);
   //   }
@@ -226,7 +230,12 @@ clearEl.onclick = function () {
  drawingShadowColorEl = document.getElementById("drawing-shadow-color");
  
 drawingShadowColorEl.onchange = function () {
+  canvas.isDrawingMode = true
+
+  canvas.statefullCache = true;
+
   canvas.freeDrawingBrush.shadowColor = this.value;
+  console.log(canvas.freeDrawingBrush.shadowColor,"shadowColor")
 };
 
 drawingShadowWidth.onchange = function () {
@@ -434,6 +443,39 @@ const downloadImage = () => {
   link.download = `eraser_example.${ext}`;
   link.click();
 };
+
+const downloadSelectedObject = () =>{
+  const ext = "png";
+  var selectedObject = canvas.getActiveObject();
+  const base64 = selectedObject.toDataURL({
+    format: ext,
+    enableRetinaScaling: true,
+  });
+  const link = document.createElement("a");
+  link.href = base64;
+  link.download = `eraser_example.${ext}`;
+  link.click();
+}
+
+const downloadSelectedObjectInSVG = () =>{
+  var selectedObject = canvas.getActiveObject();
+  const svg = selectedObject.toSVG();
+
+  const a = document.createElement("a");
+  const blob = new Blob([svg], { type: "image/svg+xml" });
+  const blobURL = URL.createObjectURL(blob);
+  a.href = blobURL;
+  a.download = "eraser_example.svg";
+  a.click();
+  URL.revokeObjectURL(blobURL);
+}
+
+// When a button is clicked, send the last drawn object as an SVG string
+canvas.addEventListener('click', function() {
+  var lastObject = canvas.getObjects()[canvas.getObjects().length - 1];
+  var svgString = lastObject.toSVG();
+  console.log(svgString); // log the SVG string to the console
+});
 
 const downloadSVG = () => {
   const svg = canvas.toSVG();

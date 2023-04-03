@@ -121,6 +121,7 @@ var fillColor = "#f00";
 var fillTolerance = 2;
 
 function hexToRgb(hex, opacity) {
+  
   opacity = Math.round(opacity * 255) || 255;
   hex = hex.replace("#", "");
   var rgb = [],

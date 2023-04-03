@@ -4,6 +4,9 @@
  * @date October 2018
  */
 
+var tempEnable = false;
+
+
 var FloodFill = {
   // Compare subsection of array1's values to array2's values, with an optional tolerance
   withinTolerance: function (array1, offset, array2, tolerance) {
@@ -66,48 +69,75 @@ var FloodFill = {
   },
 }; // End FloodFill
 
-// var canvas; // Fabric Canvas
+var fcanvas; // Fabric fcanvas
+var canvas;
 var fillColor = "#f00";
 var fillTolerance = 2;
 
+function hexToRgb(hex, opacity) {
+  
+  opacity = Math.round(opacity * 255) || 255;
+  hex = hex.replace("#", "");
+  var rgb = [],
+    re = new RegExp("(.{" + hex.length / 3 + "})", "g");
+  hex.match(re).map(function (l) {
+    rgb.push(parseInt(hex.length % 2 ? l + l : l, 16));
+  });
+  return rgb.concat(opacity);
+}
 
 
 function floodFill(enable) {
   if (!enable) {
-    canvas.off("mouse:down");
-    canvas.selection = true;
-    canvas.forEachObject(function (object) {
+    fcanvas.off("mouse:down");
+    fcanvas.selection = true;
+    fcanvas.forEachObject(function (object) {
       object.selectable = true;
     });
+    fcanvas.isDrawingMode = true;
+    fcanvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+      fcanvas.freeDrawingBrush.width = 35;
+      fcanvas.freeDrawingBrush.color = "green";
+      fcanvas.isDrawingMode = true;
     return;
   }
 
-  canvas.discardActiveObject().renderAll(); // Hide object handles!
-  canvas.selection = false;
-  canvas.forEachObject(function (object) {
+  fcanvas.discardActiveObject().renderAll(); // Hide object handles!
+  fcanvas.selection = false;
+  fcanvas.forEachObject(function (object) {
     object.selectable = false;
   });
 
-  canvas.on({
+  fcanvas.on({
     "mouse:down": function (e) {
-      var mouse = canvas.getPointer(e.e),
-        mouseX = Math.round(mouse.x),
-        mouseY = Math.round(mouse.y),
-        canvas = canvas.lowerCanvasEl,
-        context = canvas.getContext("2d"),
-        parsedColor = hexToRgb(fillColor),
-        imageData = context.getImageData(0, 0, canvas.width, canvas.height),
-        getPointOffset = function (x, y) {
-          return 4 * (y * imageData.width + x);
-        },
-        targetOffset = getPointOffset(mouseX, mouseY),
-        target = imageData.data.slice(targetOffset, targetOffset + 4);
+      var mouse = fcanvas.getPointer(e.e)
+      var mouseX = Math.round(mouse.x)
+      canvas = fcanvas.lowerCanvasEl
+      canvas.fillColor = "green"
+  var  mouseY = Math.round(mouse.y)
+  var  context = canvas.getContext("2d")
+  var  parsedColor = hexToRgb(fillColor)
+  var  imageData = context.getImageData(0, 0, canvas.width, canvas.height),
+    getPointOffset = function (x, y) {
+        return 4 * (y * imageData.width + x);
+    },
+    targetOffset = getPointOffset(mouseX, mouseY),
+    target = imageData.data.slice(targetOffset, targetOffset + 4);
+    
+    console.log(fcanvas,context);
+  if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
+    // Trying to fill something which is (essentially) the fill color
+    console.log("Ignore... same color");
+    return;
+  }
 
-      if (FloodFill.withinTolerance(target, 0, parsedColor, fillTolerance)) {
-        // Trying to fill something which is (essentially) the fill color
-        console.log("Ignore... same color");
-        return;
-      }
+  context.fillStyle = "rgba(0, 122, 155, 1)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  // Set overlay blending mode
+  context.globalCompositeOperation = "overlay";
+  // Draw overlay shape
+//   ctx.fillRect(0, 0, canvas.width, canvas.height);
+  fillValue = "#1aff8c";
 
       // Perform flood fill
       var data = FloodFill.fill(
@@ -139,10 +169,10 @@ function floodFill(enable) {
       tmpCanvas.height = data.height;
       tmpCtx.putImageData(imgData, 0, 0);
 
-      // Convert canvas back to image:
+      // Convert fcanvas back to image:
       var img = new Image();
       img.onload = function () {
-        canvas.add(
+        fcanvas.add(
           new fabric.Image(img, {
             left: data.x,
             top: data.y,
@@ -151,7 +181,7 @@ function floodFill(enable) {
         );
       };
       img.src = tmpCanvas.toDataURL("image/png");
-      canvas.add(
+      fcanvas.add(
         new fabric.Image(tmpCanvas, {
           left: data.x,
           top: data.y,
@@ -160,37 +190,179 @@ function floodFill(enable) {
       );
     },
   });
+  
 }
+function changeAction(target) {
+  console.log(target)
+  if(tempEnable) return;
+  canvas = fcanvas.lowerCanvasEl
+
+  fcanvas.off("mouse:down"); // remove all event listeners
+  fcanvas.off("mouse:move");
+  fcanvas.off("mouse:up");
+  console.log(canvas)
+  const types = [
+    "select",
+    "erase",
+    "undo",
+    "draw",
+    "spray",
+    "rectangle",
+    "circle",
+    "triangle",
+    "clip",
+  ];
+  types.forEach((action) => {
+    const t = document.getElementById(action);
+    t.classList.remove("active");
+  });
+  if (typeof target === "string") target = document.getElementById(target);
+  target.classList.add("active");
+  switch (target.id) {
+    case "select":
+      fcanvas.isDrawingMode = false;
+      break;
+    case "fill":
+      fcanvas.isDrawingMode = false;
+
+      break;
+    case "erase":
+      fcanvas.freeDrawingBrush = new fabric.EraserBrush(fcanvas);
+      fcanvas.freeDrawingBrush.width = 10;
+     fcanvas.isDrawingMode = true;
+      break;
+    case "undo":
+      canvas.freeDrawingBrush = new fabric.EraserBrush(fcanvas);
+      canvas.freeDrawingBrush.width = 10;
+      canvas.freeDrawingBrush.inverted = true;
+      canvas.isDrawingMode = true;
+      break;
+    case "draw":
+      fcanvas.freeDrawingBrush = new fabric.PencilBrush(fcanvas);
+      fcanvas.freeDrawingBrush.width = 35;
+      // canvas.freeDrawingBrush.color = "green";
+      fcanvas.isDrawingMode = true;
+      break;
+    case "spray":
+      canvas.freeDrawingBrush = new fabric.SprayBrush(fcanvas);
+      canvas.freeDrawingBrush.width = 35;
+      canvas.isDrawingMode = true;
+      break;
+    case "circle":
+      canvas.on("mouse:down", onMouseDownCircle);
+      canvas.on("mouse:move", onMouseMoveCircle);
+      canvas.on("mouse:up", onMouseUpCircle);
+      canvas.isDrawingMode = false;
+      break;
+    case "rectangle":
+      // var rect, isDown, origX, origY;
+      canvas.on("mouse:down", onMouseDownRectangle);
+      canvas.on("mouse:move", onMouseMoveRectangle);
+      canvas.on("mouse:up", onMouseUpRectangle);
+      // function onObjectSelected(e) {
+      //   console.log(e.target.get("type"));
+      // }
+      // canvas.on("object:selected", onObjectSelected);
+
+      canvas.isDrawingMode = false;
+      break;
+    case "triangle":
+      canvas.on("mouse:down",onMouseDownTriangle)
+      canvas.on("mouse:move",onMouseMoveTriangle)
+      canvas.on("mouse:up",onMouseUpTriangle)
+      canvas.isDrawingMode = false;
+      break;
+    case "clip":
+      canvas.on("mouse:down",onMouseDownClip)
+      canvas.on("mouse:move",onMouseMoveClip)
+      canvas.on("mouse:up",onMouseUpClip)
+      canvas.isDrawingMode = false;
+      break;
+    default:
+      break;
+  }
+}
+
+
 $(function () {
   // Init UI:
   $("#removeObject").on("click", function () {
-    var obj = canvas.getActiveObject();
-    canvas.remove(obj);
+    var obj = fcanvas.getActiveObject();
+    fcanvas.remove(obj);
   });
 
-//   $("div.color")
-//     .on("click", function () {
-//       $("div.color").removeClass("selected");
-//       $(this).addClass("selected");
-//       fillColor = $(this).data("color"); // Set in global var
-//     })
-//     .each(function () {
-//       $(this).css("backgroundColor", $(this).data("color"));
-//     });
-fillColor = "#3a28d3"
-fillTolerance = 2;
-//   $("#tolerance").on("input", function () {
-//     fillTolerance = this.value; // Set in global var
-//   });
+  $("div.color")
+  .on("click", function () {
+    $("div.color").removeClass("selected");
+    $(this).addClass("selected");
+    fillColor = $(this).data("color"); // Set in global var
+  })
+  .each(function () {
+    $(this).css("backgroundColor", $(this).data("color"));
+  });
+
+$("#tolerance").on("input", function () {
+  fillTolerance = this.value; // Set in global var
+});
+
 
   $("input[name='mode']").on("click", function () {
       console.log("kuch hua")
       if(this.value == "floodFill"){console.log("hua")}
+      tempEnable = this.value == "floodFill"
     floodFill(this.value == "floodFill");
   });
-  // Init Fabric Canvas:
-//   canvas = new fabric.Canvas("c", {
-//     backgroundColor: "#fff",
-//     enableRetinaScaling: false,
-//   });
+ 
+  // Init Fabric fcanvas:
+   fcanvas = new fabric.Canvas("c", {
+     backgroundColor: "#fff",
+     enableRetinaScaling: false,
+   });
+
+   // Add some demo-shapes:
+  fcanvas.add(
+    new fabric.Circle({
+      radius: 80,
+      fill: false,
+      left: 100,
+      top: 100,
+      stroke: "#000",
+      strokeWidth: 2,
+    })
+  );
+  fcanvas.add(
+    new fabric.Triangle({
+      width: 120,
+      height: 160,
+      left: 50,
+      top: 50,
+      stroke: "#000",
+      fill: "#00f",
+      strokeWidth: 2,
+    })
+  );
+  fcanvas.add(
+    new fabric.Rect({
+      width: 120,
+      height: 160,
+      left: 150,
+      top: 50,
+      fill: "red",
+      stroke: "#000",
+      strokeWidth: 2,
+    })
+  );
+  fcanvas.add(
+    new fabric.Rect({
+      width: 200,
+      height: 120,
+      left: 200,
+      top: 120,
+      fill: "green",
+      stroke: "#000",
+      strokeWidth: 2,
+    })
+  );
+
+
 });
