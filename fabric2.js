@@ -51,7 +51,6 @@ function onMouseDownRectangle(o) {
   });
   canvas.add(rect);
 }
-
 function onMouseMoveRectangle(o) {
   if (!isDown) return;
   // cosoe
@@ -67,12 +66,10 @@ function onMouseMoveRectangle(o) {
   rect.set({ height: Math.abs(origY - pointer.y) });
   canvas.renderAll();
 }
-
 function onMouseUpRectangle(o) {
   isDown = false;
   isDrawingMode = true;
 }
-
 function onMouseDownCircle(o) {
   isDown = true;
   var pointer = canvas.getPointer(o.e);
@@ -118,9 +115,7 @@ function onMouseUpCircle(o) {
   isDown = false;
   isDrawingMode = true;
 }
-
 var tri;
-
 function onMouseDownTriangle(o){
   isDown = true;
   canvas.isDrawingMode = false;
@@ -139,7 +134,6 @@ function onMouseDownTriangle(o){
   })
   canvas.add(tri)
 }
-
 function onMouseMoveTriangle(o){
   if (!isDown) return;
   canvas.isDrawingMode = false;
@@ -148,7 +142,6 @@ function onMouseMoveTriangle(o){
     // console.log("isMoving")
   canvas.renderAll();
 }
-
 function onMouseUpTriangle(o){
   isDown = false;
   canvas.isDrawingMode = true;
@@ -217,11 +210,10 @@ drawingLineWidthEl.onchange = function () {
   this.previousSibling.innerHTML = this.value;
 };
 
-
-
 clearEl = document.getElementById("clear-canvas");
 clearEl.onclick = function () {
-  canvas.clear();
+  fcanvas.clear();
+  console.log("clear button clicked")
 };
 
 
@@ -469,13 +461,6 @@ const downloadSelectedObjectInSVG = () =>{
   a.click();
   URL.revokeObjectURL(blobURL);
 }
-
-// When a button is clicked, send the last drawn object as an SVG string
-canvas.addEventListener('click', function() {
-  var lastObject = canvas.getObjects()[canvas.getObjects().length - 1];
-  var svgString = lastObject.toSVG();
-  console.log(svgString); // log the SVG string to the console
-});
 
 const downloadSVG = () => {
   const svg = canvas.toSVG();

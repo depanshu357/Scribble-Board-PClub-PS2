@@ -141,6 +141,29 @@ button.active {
             <button id="triangle" type="button" onclick="changeAction(this)">triangle</button>
             <button id="clip" type="button" onclick="changeAction(this)">clip</button>
         </div>
+        <div>
+            <button type="button" onclick="toJSON()">toJSON</button>
+            <button type="button" onclick="downloadImage()">to Image</button>
+            <button type="button" onclick="downloadSelectedObject()">to SElected Image</button>
+            <button type="button" onclick="downloadSelectedObjectInSVG()">to SElected Image in SVG</button>
+            <button type="button" onclick="downloadSVG()">toSVG</button>
+            <button id="clear-canvas" class="btn btn-info">Clear</button><br>
+            <label for="drawing-mode-selector">Mode:</label>
+            <select id="drawing-mode-selector">
+                <option>Pencil</option>
+                <option>Circle</option>
+                <option>Spray</option>
+                <option>Pattern</option>
+                <option>Marker</option>
+                <option>Calligraphy</option>
+    
+                <option>hline</option>
+                <option>vline</option>
+                <option>square</option>
+                <option>diamond</option>
+                <option>texture</option>
+            </select><br>
+        </div>
         <div id="canvasContainer">
             <canvas id="c" width="600" height="400"></canvas>
         </div>

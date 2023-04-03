@@ -86,7 +86,235 @@ function hexToRgb(hex, opacity) {
   });
   return rgb.concat(opacity);
 }
+var fillValue;
+var drawingColorFillEl = document.getElementById("drawing-color-fill");
+drawingLineWidthEl = document.getElementById("drawing-line-width");
+drawingLineWidthEl.onchange = function () {
+  fcanvas.freeDrawingBrush.width = parseInt(this.value, 10) || 30;
+  this.previousSibling.innerHTML = this.value;
+};
+drawingColorEl = document.getElementById("drawing-color");
+drawingColorEl.onchange = function () {
+  var brush = fcanvas.freeDrawingBrush;
+  brush.color = this.value;
+  console.log("changed")
+  // fillValue = this.value;
+  //   if (brush.getPatternSrc) {
+  //     brush.source = brush.getPatternSrc.call(brush);
+  //   }
+};
+drawingColorFillEl.onchange = function(){
+  // fcanvas.freeDrawingBrush.color = parseInt(this.value, 10) || 30;
+    fillValue = this.value;
+}
+var isDown;
+function onMouseDownRectangle(o) {
+  // console.log(selectedObject);
+  isDown = true;
+  var pointer = fcanvas.getPointer(o.e);
+  origX = pointer.x;
+  origY = pointer.y;
+  var pointer = fcanvas.getPointer(o.e);
+  fcanvas.isDrawingMode = false;
+  rect = new fabric.Rect({
+    left: origX,
+    top: origY,
+    originX: "left",
+    originY: "top",
+    width: pointer.x - origX,
+    height: pointer.y - origY,
+    angle: 0,
+    stroke:fcanvas.freeDrawingBrush.color,
+    // fill: "rgba(255,0,0,0.5)",
+    fill: fillValue,
+    transparentCorners: false,
+  });
+  fcanvas.add(rect);
+}
+function onMouseMoveRectangle(o) {
+  if (!isDown) return;
+  // cosoe
+  var pointer = fcanvas.getPointer(o.e);
+  fcanvas.isDrawingMode = false;
+  if (origX > pointer.x) {
+    rect.set({ left: Math.abs(pointer.x) });
+  }
+  if (origY > pointer.y) {
+    rect.set({ top: Math.abs(pointer.y) });
+  }
+  rect.set({ width: Math.abs(origX - pointer.x) });
+  rect.set({ height: Math.abs(origY - pointer.y) });
+  fcanvas.renderAll();
+}
+function onMouseUpRectangle(o) {
+  isDown = false;
+  isDrawingMode = true;
+}
+function onMouseDownCircle(o) {
+  isDown = true;
+  var pointer = fcanvas.getPointer(o.e);
+  origX = pointer.x;
+  origY = pointer.y;
+  fcanvas.isDrawingMode = false;
+  circle = new fabric.Circle({
+    left: origX,
+    top: origY,
+    originX: "left",
+    originY: "top",
+    radius: pointer.x - origX,
+    angle: 0,
+    fill: fillValue,
+    stroke: fcanvas.freeDrawingBrush.color,
+    strokeWidth: 3,
+  });
+  fcanvas.add(circle);
+}
+function onMouseMoveCircle(o) {
+  if (!isDown) return;
+  var pointer = fcanvas.getPointer(o.e);
+  fcanvas.isDrawingMode = false;
+  var radius =
+    Math.max(Math.abs(origY - pointer.y), Math.abs(origX - pointer.x)) / 2;
+  if (radius > circle.strokeWidth) {
+    radius -= circle.strokeWidth / 2;
+  }
+  circle.set({ radius: radius });
+  if (origX > pointer.x) {
+    circle.set({ originX: "right" });
+  } else {
+    circle.set({ originX: "left" });
+  }
+  if (origY > pointer.y) {
+    circle.set({ originY: "bottom" });
+  } else {
+    circle.set({ originY: "top" });
+  }
+  fcanvas.renderAll();
+}
+function onMouseUpCircle(o) {
+  isDown = false;
+  isDrawingMode = true;
+}
+var tri;
+function onMouseDownTriangle(o){
+  isDown = true;
+  fcanvas.isDrawingMode = false;
+  var pointer = fcanvas.getPointer(o.e);
+  origX = pointer.x;
+  origY = pointer.y;
+  tri = new fabric.Triangle({
+    left: pointer.x,
+    top: pointer.y,
+    strokeWidth: 1,
+    width:2,height:2,
+    stroke: fcanvas.freeDrawingBrush.color,
+    fill:fillValue,
+    selectable: true,
+    originX: 'center'
+  })
+  fcanvas.add(tri)
+}
+function onMouseMoveTriangle(o){
+  if (!isDown) return;
+  fcanvas.isDrawingMode = false;
+  var pointer = fcanvas.getPointer(o.e);
+    tri.set({ width: Math.abs(origX - pointer.x),height: Math.abs(origY - pointer.y)});
+    // console.log("isMoving")
+  fcanvas.renderAll();
+}
+function onMouseUpTriangle(o){
+  isDown = false;
+  isDrawingMode = true;
+}
 
+let erasingRemovesErasedObjects = false;
+drawingLineWidthEl = document.getElementById("drawing-line-width");
+drawingLineWidthEl.onchange = function () {
+  fcanvas.freeDrawingBrush.width = parseInt(this.value, 10) || 30;
+  this.previousSibling.innerHTML = this.value;
+};
+
+var clearEl = document.getElementById("clear-canvas");
+clearEl.onclick = function () {
+  fcanvas.clear();
+};
+
+
+ drawingShadowWidth = document.getElementById("drawing-shadow-width");
+ drawingShadowOffset = document.getElementById("drawing-shadow-offset");
+ drawingShadowColorEl = document.getElementById("drawing-shadow-color");
+ 
+drawingShadowColorEl.onchange = function () {
+  fcanvas.isDrawingMode = true
+  // fcanvas.statefullCache = true;
+  fcanvas.freeDrawingBrush.shadowColor = this.value;
+  console.log(fcanvas.freeDrawingBrush.shadowColor,"shadowColor")
+};
+
+drawingShadowWidth.onchange = function () {
+      fcanvas.freeDrawingBrush.shadowBlur = parseInt(this.value, 10) || 30;
+    this.previousSibling.innerHTML = this.value;
+    console.log(fcanvas.freeDrawingBrush.shadowBlur)
+//   console.log(this)
+};
+drawingShadowOffset.onchange = function () {
+  fcanvas.freeDrawingBrush.shadow.offsetX = parseInt(this.value, 10) || 30;
+  fcanvas.freeDrawingBrush.shadow.offsetY = parseInt(this.value, 10) || 30;
+  this.previousSibling.innerHTML = this.value;
+};
+
+// var drawingOptionsEl = document.getElementById("drawing-mode-options")
+document.getElementById("drawing-mode-selector").onchange = function () {
+    if (this.value === "hline") {
+      canvas.freeDrawingBrush = vLinePatternBrush;
+    } else if (this.value === "vline") {
+      canvas.freeDrawingBrush = hLinePatternBrush;
+    } else if (this.value === "square") {
+      canvas.freeDrawingBrush = squarePatternBrush;
+    } else if (this.value === "diamond") {
+      canvas.freeDrawingBrush = diamondPatternBrush;
+    } else if (this.value === "texture") {
+      canvas.freeDrawingBrush = texturePatternBrush;
+    }
+    // else if (this.value === 'Calligraphy') {
+    //     // canvas.freeDrawingBrush = new fabric['calligraphyBrush'](canvas)
+    //     const calligraphyBrush = new fabric.CalligraphyBrush(canvas);
+    //     // calligraphyBrush.color = "#000000"; // set color to black
+    //     calligraphyBrush.width = 5; // set stroke width to 5 pixels
+    //     console.log(clicked)
+
+    //     canvas.isDrawingMode = true;
+    //     canvas.freeDrawingBrush = calligraphyBrush;
+    // }
+    else if (this.value === "Marker") {
+      const markerBrush = new fabric.MarkerBrush(fcanvas);
+      markerBrush.color = "#000000"; // set color to black
+      markerBrush.width = 20; // set stroke width to 20 pixels
+      markerBrush.strokeLineCap = "round"; // set line cap to round
+
+      fcanvas.isDrawingMode = true;
+      fcanvas.freeDrawingBrush = markerBrush;
+    } else {
+      console.log(this.value);
+      fcanvas.freeDrawingBrush = new fabric[this.value + "Brush"](fcanvas);
+
+      if (fcanvas.freeDrawingBrush) {
+        var brush = fcanvas.freeDrawingBrush;
+        brush.color = drawingColorEl.value;
+        if (brush.getPatternSrc) {
+          brush.source = brush.getPatternSrc.call(brush);
+        }
+        brush.width = parseInt(drawingLineWidthEl.value, 10) || 1;
+        brush.shadow = new fabric.Shadow({
+          blur: parseInt(drawingShadowWidth.value, 10) || 0,
+          offsetX: 0,
+          offsetY: 0,
+          affectStroke: true,
+          color: drawingShadowColorEl.value,
+        });
+      }
+    }
+  }
 
 function floodFill(enable) {
   if (!enable) {
@@ -140,7 +368,8 @@ function floodFill(enable) {
   context.globalCompositeOperation = "overlay";
   // Draw overlay shape
 //   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  fillValue = "#1aff8c";
+fillValue = "#1aff8c";
+
 
       // Perform flood fill
       var data = FloodFill.fill(
@@ -195,10 +424,13 @@ function floodFill(enable) {
   });
   
 }
+
+
+
 function changeAction(target) {
   console.log(target)
   if(tempEnable) return;
-  canvas = fcanvas.lowerCanvasEl
+  var canvas = fcanvas.lowerCanvasEl
 
   fcanvas.off("mouse:down"); // remove all event listeners
   fcanvas.off("mouse:move");
@@ -235,10 +467,10 @@ function changeAction(target) {
      fcanvas.isDrawingMode = true;
       break;
     case "undo":
-      canvas.freeDrawingBrush = new fabric.EraserBrush(fcanvas);
-      canvas.freeDrawingBrush.width = 10;
-      canvas.freeDrawingBrush.inverted = true;
-      canvas.isDrawingMode = true;
+      fcanvas.freeDrawingBrush = new fabric.EraserBrush(fcanvas);
+      fcanvas.freeDrawingBrush.width = 10;
+      fcanvas.freeDrawingBrush.inverted = true;
+      fcanvas.isDrawingMode = true;
       break;
     case "draw":
       fcanvas.freeDrawingBrush = new fabric.PencilBrush(fcanvas);
@@ -286,6 +518,84 @@ function changeAction(target) {
   }
 }
 
+const setDrawableErasableProp = (drawable, value) => {
+  canvas.get(drawable)?.set({ erasable: value });
+  changeAction("erase");
+};
+
+const setBgImageErasableProp = (input) =>
+  setDrawableErasableProp("backgroundImage", input.checked);
+
+const setErasingRemovesErasedObjects = (input) =>
+  (erasingRemovesErasedObjects = input.checked);
+
+const downloadImage = () => {
+  const ext = "png";
+  const base64 = fcanvas.toDataURL({
+    format: ext,
+    enableRetinaScaling: true,
+  });
+  const link = document.createElement("a");
+  link.href = base64;
+  link.download = `eraser_example.${ext}`;
+  link.click();
+};
+
+const downloadSelectedObject = () =>{
+  const ext = "png";
+  var selectedObject = fcanvas.getActiveObject();
+  const base64 = selectedObject.toDataURL({
+    format: ext,
+    enableRetinaScaling: true,
+  });
+  const link = document.createElement("a");
+  link.href = base64;
+  link.download = `eraser_example.${ext}`;
+  link.click();
+}
+
+const downloadSelectedObjectInSVG = () =>{
+  var selectedObject = fcanvas.getActiveObject();
+  const svg = selectedObject.toSVG();
+
+  const a = document.createElement("a");
+  const blob = new Blob([svg], { type: "image/svg+xml" });
+  const blobURL = URL.createObjectURL(blob);
+  a.href = blobURL;
+  a.download = "eraser_example.svg";
+  a.click();
+  URL.revokeObjectURL(blobURL);
+}
+
+const downloadSVG = () => {
+  const svg = fcanvas.toSVG();
+  const a = document.createElement("a");
+  const blob = new Blob([svg], { type: "image/svg+xml" });
+  const blobURL = URL.createObjectURL(blob);
+  a.href = blobURL;
+  a.download = "eraser_example.svg";
+  a.click();
+  URL.revokeObjectURL(blobURL);
+};
+
+const toJSON = async () => {
+  const json = fcanvas.toDatalessJSON(["clipPath", "eraser"]);
+  const out = JSON.stringify(json, null, "\t");
+  const blob = new Blob([out], { type: "text/plain" });
+  const clipboardItemData = { [blob.type]: blob };
+  try {
+    navigator.clipboard &&
+      (await navigator.clipboard.write([new ClipboardItem(clipboardItemData)]));
+  } catch (error) {
+    console.log(error);
+  }
+  const blobURL = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = blobURL;
+  a.download = "eraser_example.json";
+  a.click();
+  URL.revokeObjectURL(blobURL);
+};
 
 $(function () {
   // Init UI:
