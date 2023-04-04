@@ -700,7 +700,7 @@ $("#tolerance").on("input", function () {
    // Add some demo-shapes:
   fcanvas.add(
     new fabric.Circle({
-      radius: 80,
+      radius: 201*0.7,
       fill: false,
       left: 100,
       top: 100,
