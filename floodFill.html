@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
     <style>
         body, input, button {
 	font: 12pt Arial, Helvetica;
@@ -56,116 +57,123 @@ button.active {
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
 </head>
 <body>
-        <table cellpadding="6">
-            <tr>
-                <td>Mode</td>
-                <td>
-                    <input type="radio" name="mode" value="fabric" id="mode1" checked> <label for="mode1">Default</label>
-                    <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
-                </td>
-            </tr>
-            <tr>
-                <td>Color</td>
-                <td>
-                    <div class="color selected" data-color="#f00"></div>
-                    <div class="color" data-color="#0f0"></div>
-                    <div class="color" data-color="#00f"></div>
-                    <div class="color" data-color="#000"></div>
-                    <div class="color" data-color="#fff"></div>
-                    <div class="color" data-color="#0ff"></div>
-                    <div class="color" data-color="#f0f"></div>
-                    <div class="color" data-color="#ff0"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>Tolerance</td>
-                <td><input type="range" id="tolerance" min="0" max="50" value="2" step="1"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <button type="button" id="removeObject">Remove object</button>
-                </td>
-            </tr>
-        </table>
-        <div>
-            <div>
-                <label for="drawing-line-width">Line width:</label>
-                <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+    <div id="megaboss" >
+        <div id="sabkuch">
+            <div style="margin: 1rem;">
+                <table cellpadding="10">
+                    <tr>
+                        <td>Mode</td>
+                        <td>
+                            <input type="radio" name="mode" value="fabric" id="mode1" checked> <label for="mode1">Default</label>
+                            <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="margin:1rem;">Color</td>
+                        <td>
+                            <div class="color" data-color="#f00" style="background-color:#f00 ;"></div>
+                            <div class="color" data-color="#0f0"  style="background-color:#0f0;"></div>
+                            <div class="color" data-color="#00f" style="background-color:#00f;"></div>
+                            <div class="color" data-color="#000"style="background-color:#000;"></div>
+                            <div class="color" data-color="#fff"style="background-color:#fff ;"></div>
+                            <div class="color" data-color="#0ff"style="background-color:#0ff ;"></div>
+                            <div class="color" data-color="#f0f"style="background-color:#f0f ;"></div>
+                            <div class="color" data-color="#ff0"style="background-color:#ff0 ;"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tolerance</td>
+                        <td><input type="range" id="tolerance" min="0" max="50" value="2" step="1"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button type="button" id="removeObject">Remove object</button>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <div>
-                <label for="drawing-color">Line color:</label>
-                <input type="color" value="black" id="drawing-color"><br>
+            <div class="threebar">
+                <div style="margin:5px;">
+                    <label for="drawing-line-width">Line width  :</label>
+                    <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+                </div>
+                <div style="margin:8px;">
+                    <label for="drawing-color">Line color  :</label>
+                    <input type="color" value="black" id="drawing-color"><br>
+                </div>
+                <div style="margin:8px;">
+                    <label for="drawing-color-fill">Fill color  :</label>
+                    <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+                </div>
+        
+                <div style="word-spacing: 5px;">
+                    <input id="a" type="checkbox" onchange="setBgImageErasableProp(this)">
+                    <label for="a">
+                        Background image <code>Erasable</code>
+                    </label>
+                    
+                </div style="margin:5px;">
+                <div style="word-spacing: 5px;">
+                    <input id="b" type="checkbox" onchange="setErasingRemovesErasedObjects(this)">
+                    <label for="b">
+                        Remove erased objects on <code>Erasing end</code>
+                    </label>
+                    
+                </div>
+                <div style="margin:5px;">
+                    <label for="drawing-shadow-width">Shadow width  :</label>
+                    <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
+                </div>
+                <div>
+                    <label for="drawing-shadow-offset">Shadow offset  :</label>
+                    <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+                </div>
+                <div>
+                    <label for="drawing-shadow-color">Shadow color  :</label>
+                    <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
+                </div>
+                
             </div>
-            <div>
-                <label for="drawing-color-fill">Fill color:</label>
-                <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+            <div class="controls" >
+                <button id="select" type="button" onclick="changeAction(this)">Select</button>
+                <button id="erase" type="button" onclick="changeAction(this)">Erase</button>
+                <button id="undo" type="button" onclick="changeAction(this)">Undo Erasing</button>
+                <button id="draw" type="button" onclick="changeAction(this)">Draw</button>
+                <button id="spray" type="button" onclick="changeAction(this)">Spray</button>
+                <button id="rectangle" type="button" onclick="changeAction(this)">Rectangle</button>
+                <button id="circle" type="button" onclick="changeAction(this)">Circle</button>
+                <button id="triangle" type="button" onclick="changeAction(this)">Triangle</button>
+                <button id="clip" type="button" onclick="changeAction(this)">Clip</button>
             </div>
-    
-            <div>
-                <label for="a">
-                    background image <code>erasable</code>
-                </label>
-                <input id="a" type="checkbox" onchange="setBgImageErasableProp(this)">
+            <div id="buttons" style="margin: 1rem;">
+                <button id="btnZoomIn">ZoomIn</button>
+                <button id="btnZoomOut">ZoomOut</button>
+                <button type="button" onclick="toJSON()">toJSON</button>
+                <button type="button" onclick="downloadImage()">toImage</button>
+                <button type="button" onclick="downloadSelectedObject()">to Selected Image</button>
+                <button type="button" onclick="downloadSelectedObjectInSVG()">to Selected Image in SVG</button>
+                <button type="button" onclick="downloadSVG()">toSVG</button>
+                <button id="clear-canvas" class="btn btn-info">Clear</button><br>
+                <label for="drawing-mode-selector" style="margin: 1rem;">Mode  :</label>
+                <select id="drawing-mode-selector">
+                    <option><b>Pencil</b></option>
+                    <option>Circle</option>
+                    <option>Spray</option>
+                    <option>Pattern</option>
+                    <option>Marker</option>
+                    <option>Calligraphy</option>
+                    <option>Hline</option>
+                    <option>Vline</option>
+                    <option>Square</option>
+                    <option>Diamond</option>
+                    <option>Texture</option>
+                </select><br>
             </div>
-            <div>
-                <label for="b">
-                    remove erased objects on <code>erasing:end</code>
-                </label>
-                <input id="b" type="checkbox" onchange="setErasingRemovesErasedObjects(this)">
-            </div>
-            <div>
-                <label for="drawing-shadow-width">Shadow width:</label>
-                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
-            </div>
-            <div>
-                <label for="drawing-shadow-offset">Shadow offset:</label>
-                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
-            </div>
-            <div>
-                <label for="drawing-shadow-color">Shadow color:</label>
-                <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
-            </div>
-            
         </div>
-        <div class="controls">
-            <button id="select" type="button" onclick="changeAction(this)">select</button>
-            <button id="erase" type="button" onclick="changeAction(this)">erase</button>
-            <button id="undo" type="button" onclick="changeAction(this)">undo erasing</button>
-            <button id="draw" type="button" onclick="changeAction(this)">draw</button>
-            <button id="spray" type="button" onclick="changeAction(this)">spray</button>
-            <button id="rectangle" type="button" onclick="changeAction(this)">rectangle</button>
-            <button id="circle" type="button" onclick="changeAction(this)">circle</button>
-            <button id="triangle" type="button" onclick="changeAction(this)">triangle</button>
-            <button id="clip" type="button" onclick="changeAction(this)">clip</button>
-        </div>
-        <div>
-            <button id="btnZoomIn">ZoomIn</button>
-            <button id="btnZoomOut">ZoomOut</button>
-            <button type="button" onclick="toJSON()">toJSON</button>
-            <button type="button" onclick="downloadImage()">to Image</button>
-            <button type="button" onclick="downloadSelectedObject()">to SElected Image</button>
-            <button type="button" onclick="downloadSelectedObjectInSVG()">to SElected Image in SVG</button>
-            <button type="button" onclick="downloadSVG()">toSVG</button>
-            <button id="clear-canvas" class="btn btn-info">Clear</button><br>
-            <label for="drawing-mode-selector">Mode:</label>
-            <select id="drawing-mode-selector">
-                <option>Pencil</option>
-                <option>Circle</option>
-                <option>Spray</option>
-                <option>Pattern</option>
-                <option>Marker</option>
-                <option>Calligraphy</option>
-    
-                <option>hline</option>
-                <option>vline</option>
-                <option>square</option>
-                <option>diamond</option>
-                <option>texture</option>
-            </select><br>
-        </div>
+    </div>
         <div id="canvasContainer">
-            <canvas id="c" width="600" height="400"></canvas>
+            <canvas id="c" width="1000" height="740"></canvas>
         </div>
         <!-- <script src="floodFillOriginal.js"></script> -->
         <script src="floodFill.js"></script>
