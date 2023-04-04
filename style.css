@@ -1,24 +1,30 @@
 /* Import Google font - Poppins */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
 *{
-  margin: 0;
-  padding: 0;
+  margin: 0px;
+  padding: 0px;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
+  border-radius: 13px;
 }
 body{
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background: #4A98F7;
+  min-height: 100px;
+  background: rgb(10,178,234);
+  /* margin: 5px; */
+  width: 100%;
+  
 }
 .container{
   display: flex;
   width: 100%;
   gap: 10px;
-  padding: 10px;
+  padding: 20px;
   max-width: 1050px;
+  border-radius: 5px;
+  
 }
 section{
   background: #fff;
@@ -38,7 +44,7 @@ section{
 .row .options .option{
   display: flex;
   cursor: pointer;
-  align-items: center;
+  align-items: left;
   margin-bottom: 10px;
 }
 .option:is(:hover, .active) img{
@@ -122,6 +128,7 @@ section{
   background: none;
   border-radius: 4px;
   cursor: pointer;
+  
 }
 .buttons .clear-canvas{
   color: #6C757D;
@@ -143,4 +150,55 @@ section{
 .drawing-board canvas{
   width: 100%;
   height: 100%;
+  border-radius: 5px;
+}
+.controls:hover{
+  color: rgb(8, 128, 183);
+
+}
+.toolsbox3{
+  background-color:white;
+  width: 21%;
+  padding: 20px;
+}
+#container10{
+  border-radius: 5px;
+  /* border: 1px solid black; */
+  margin: 2rem;
+  display: flex;
+  gap: 10px;
+  /* text-align: center; */
+
+
+}
+#c{
+  background-color: white;
+
+}
+.colors{
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+}
+.colorpick{
+  display: flex;
+  border: 1px;
+  border-color: #000;
+}
+button{
+  margin: 4px;
+  padding: 5px;
+
+}
+button:hover{
+  background-image: linear-gradient(rgb(187, 116, 248),rgb(210, 119, 241));
+}#table{
+  margin: 1rem;
+}
+.controls{
+  margin: 1rem;
+}
+#options{
+  margin: 3px;
+  padding: 4px;
 }
