@@ -7,162 +7,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Document</title>
-    <style>
-        button.active {
-            background: limegreen;
-            font-weight: bold
-        }
+    <link rel="stylesheet" href="style.css">
 
-        canvas {
-            border: 2px solid red;
-        }
-
-        div.color {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            padding: 1px;
-            border: 1px solid #000;
-            cursor: pointer;
-        }
-
-        div.color.selected {
-            padding: 0;
-            border: 2px solid #000;
-        }
-    </style>
+    <script src="C:\Users\tanay\web dev project 2.o\PClub-PS2\style.css"></script>
     <!-- <script src="fabric.min.js"></script> -->
     <script src="https://unpkg.com/fabric@latest/dist/fabric.js"></script>
     <script src="https://unpkg.com/fabric@latest/src/mixins/eraser_brush.mixin.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <style>
+        .controls:active{
+            color: red;
+            background-color: yellow;
+          }
+    </style>
 </head>
 
 <body>
+    <div id="container10"  >
+        <div class="toolsbox3">
+            <table id="table" cellpadding="5">
+                <tr>
+                    <td>Mode</td>
+                    <td>
+                        <input type="radio" name="mode" value="fabric" id="mode1" checked> <label
+                            for="mode1">Default</label>
+                        <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Color</td>
+                    <td class="colorpick">
+                        <div class="color selected" data-color="#f00"></div>
+                        <div class="colors" data-color="#0f0" style="background-color:#0f0"></div>
+                        <div class="colors" data-color="#00f" style="background-color:#00f"></div>
+                        <div class="colors" data-color="#000" style="background-color:#000"></div>
+                        <div class="colors" data-color="#fff" style="background-color:#fff"></div>
+                        <div class="colors" data-color="#0ff" style="background-color:#0ff" ></div>
+                        <div class="colors" data-color="#f0f" style="background-color:#f0f"></div>
+                        <div class="colors" data-color="#ff0" style="background-color:#ff0"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Tolerance</td>
+                    <td><input type="range" id="tolerance" min="0" max="50" value="2" step="1"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <button type="button" id="removeObject">Remove Object</button>
+                    </td>
+                </tr>
+            </table>
+        
+    
+        <div class="controls">
+            <button id="select" type="button" onclick="changeAction(this)" class="b1" ><b>Select</b></button>
+            <button id="erase" type="button" onclick="changeAction(this)"class="b1"><b>Erase</b></button>
+            <button id="draw" type="button" onclick="changeAction(this)"class="b1"><b>Draw</b></button>
+            <button id="spray" type="button" onclick="changeAction(this)"class="b1"><b>Spray</b></button>
+            <button id="rectangle" type="button" onclick="changeAction(this)"class="b1"><b>Rectangle</b></button>
+            <button id="circle" type="button" onclick="changeAction(this)"class="b1"><b>Circle</b></button>
+            <button id="triangle" type="button" onclick="changeAction(this)"class="b1"><b>Triangle</b></button>
+            <button id="clip" type="button" onclick="changeAction(this)"class="b1"><b>Clip</b></button>
+            <button id="undo" type="button" onclick="changeAction(this)"class="b1"><b>Undo Erasing</b></button>
+        </div>
+
+        <div style="margin:10px;padding:4px">
+            <div>
+                <label for="drawing-line-width">Line width:</label>
+                <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
+            </div>
+            <div>
+                <label for="drawing-color">Line color:</label>
+                <input type="color" value="black" id="drawing-color"><br>
+            </div>
+            <div>
+                <label for="drawing-color-fill">Fill color:</label>
+                <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+            </div>
+
+            <div>
+                <label for="a">
+                    background image <code>erasable</code>
+                </label>
+                <input id="a" type="checkbox" onchange="setBgImageErasableProp(this)">
+            </div>
+            <div>
+                <label for="b">
+                    remove erased objects on <code>erasing:end</code>
+                </label>
+                <input id="b" type="checkbox" onchange="setErasingRemovesErasedObjects(this)">
+            </div>
+            <div>
+                <label for="drawing-shadow-width">Shadow width:</label>
+                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
+            </div>
+            <div>
+                <label for="drawing-shadow-offset">Shadow offset:</label>
+                <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
+            </div>
+            <div>
+                <label for="drawing-shadow-color">Shadow color:</label>
+                <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
+            </div>
+        </div>
+        <div style="margin:10px;padding:4px">
+            <button type="button" onclick="toJSON()">toJSON</button>
+            <button type="button" onclick="downloadImage()">to Image</button>
+            <button type="button" onclick="downloadSVG()">toSVG</button>
+            <button id="clear-canvas" class="btn btn-info" style="background-color: aliceblue;">Clear</button><br>
+            <label for="drawing-mode-selector">Mode:</label>
+            <select id="drawing-mode-selector">
+                <option>Pencil</option>
+                <option>Circle</option>
+                <option>Spray</option>
+                <option>Pattern</option>
+                <option>Marker</option>
+                <option>Calligraphy</option>
+
+                <option>hline</option>
+                <option>vline</option>
+                <option>square</option>
+                <option>diamond</option>
+                <option>texture</option>
+            </select>
+        </div>
+
+        
+    </div>
     <div>
-        <table cellpadding="6">
-            <tr>
-                <td>Mode</td>
-                <td>
-                    <input type="radio" name="mode" value="fabric" id="mode1" checked> <label
-                        for="mode1">Default</label>
-                    <input type="radio" name="mode" value="floodFill" id="mode2"> <label for="mode2">Flood fill</label>
-                </td>
-            </tr>
-            <tr>
-                <td>Color</td>
-                <td>
-                    <div class="color selected" data-color="#f00"></div>
-                    <div class="color" data-color="#0f0"></div>
-                    <div class="color" data-color="#00f"></div>
-                    <div class="color" data-color="#000"></div>
-                    <div class="color" data-color="#fff"></div>
-                    <div class="color" data-color="#0ff"></div>
-                    <div class="color" data-color="#f0f"></div>
-                    <div class="color" data-color="#ff0"></div>
-                </td>
-            </tr>
-            <tr>
-                <td>Tolerance</td>
-                <td><input type="range" id="tolerance" min="0" max="50" value="2" step="1"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td>
-                    <button type="button" id="removeObject">Remove object</button>
-                </td>
-            </tr>
-        </table>
-    </div>
-    <div class="controls">
-        <button id="select" type="button" onclick="changeAction(this)">select</button>
-        <button id="erase" type="button" onclick="changeAction(this)">erase</button>
-        <button id="undo" type="button" onclick="changeAction(this)">undo erasing</button>
-        <button id="draw" type="button" onclick="changeAction(this)">draw</button>
-        <button id="spray" type="button" onclick="changeAction(this)">spray</button>
-        <button id="rectangle" type="button" onclick="changeAction(this)">rectangle</button>
-        <button id="circle" type="button" onclick="changeAction(this)">circle</button>
-        <button id="triangle" type="button" onclick="changeAction(this)">triangle</button>
-        <button id="clip" type="button" onclick="changeAction(this)">clip</button>
-    </div>
-
-    <div>
         <div>
-            <label for="drawing-line-width">Line width:</label>
-            <span class="info">30</span><input type="range" value="30" min="0" max="150" id="drawing-line-width"><br>
-        </div>
-        <div>
-            <label for="drawing-color">Line color:</label>
-            <input type="color" value="black" id="drawing-color"><br>
-        </div>
-        <div>
-            <label for="drawing-color-fill">Fill color:</label>
-            <input type="color" value="#f7f7f700" id="drawing-color-fill"><br>
+            <canvas id="c" width="1100" height="770"></canvas>
         </div>
 
-        <div>
-            <label for="a">
-                background image <code>erasable</code>
-            </label>
-            <input id="a" type="checkbox" onchange="setBgImageErasableProp(this)">
-        </div>
-        <div>
-            <label for="b">
-                remove erased objects on <code>erasing:end</code>
-            </label>
-            <input id="b" type="checkbox" onchange="setErasingRemovesErasedObjects(this)">
-        </div>
-        <div>
-            <label for="drawing-shadow-width">Shadow width:</label>
-            <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-width"><br>
-        </div>
-        <div>
-            <label for="drawing-shadow-offset">Shadow offset:</label>
-            <span class="info">0</span><input type="range" value="0" min="0" max="50" id="drawing-shadow-offset"><br>
-        </div>
-        <div>
-            <label for="drawing-shadow-color">Shadow color:</label>
-            <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
-        </div>
     </div>
-    <div>
-        <button type="button" onclick="toJSON()">toJSON</button>
-        <button type="button" onclick="downloadImage()">to Image</button>
-        <button type="button" onclick="downloadSelectedObject()">to SElected Image</button>
-        <button type="button" onclick="downloadSelectedObjectInSVG()">to SElected Image in SVG</button>
-        <button type="button" onclick="downloadSVG()">toSVG</button>
-        <button id="clear-canvas" class="btn btn-info">Clear</button><br>
-        <label for="drawing-mode-selector">Mode:</label>
-        <select id="drawing-mode-selector">
-            <option>Pencil</option>
-            <option>Circle</option>
-            <option>Spray</option>
-            <option>Pattern</option>
-            <option>Marker</option>
-            <option>Calligraphy</option>
-
-            <option>hline</option>
-            <option>vline</option>
-            <option>square</option>
-            <option>diamond</option>
-            <option>texture</option>
-        </select><br>
-    </div>
-
-    <div style="display:flex;flex-direction:row;">
-        <div>
-            <canvas id="c" width="500" height="620"></canvas>
-        </div>
-        <div style="margin:0 1rem;">
-            <code>erasing:end</code><br>
-            <code id="output">N/A</code>
-        </div>
     </div>
     <script>
 
     </script>
     <script src="fabric2.js"></script>
-    <!-- <script src="floodFill.js"></script> -->
-
+    <script src="floodFill.js"></script>
+    <script src="floodFillOriginal.js"></script>
 </body>
 
 </html>
