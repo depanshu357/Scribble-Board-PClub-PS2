@@ -249,6 +249,14 @@ button:hover{
   margin: 2rem;
   font-size: medium;
 }
-button::selection{
-  color: red;
+button:visited{
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  color: white;
 }
+button:active{
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  color: black;
+}
+
+
+
