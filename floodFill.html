@@ -129,6 +129,7 @@ button.active {
                 <label for="drawing-shadow-color">Shadow color:</label>
                 <input type="color" value="#005E7A" id="drawing-shadow-color"><br>
             </div>
+            
         </div>
         <div class="controls">
             <button id="select" type="button" onclick="changeAction(this)">select</button>
@@ -142,6 +143,8 @@ button.active {
             <button id="clip" type="button" onclick="changeAction(this)">clip</button>
         </div>
         <div>
+            <button id="btnZoomIn">ZoomIn</button>
+            <button id="btnZoomOut">ZoomOut</button>
             <button type="button" onclick="toJSON()">toJSON</button>
             <button type="button" onclick="downloadImage()">to Image</button>
             <button type="button" onclick="downloadSelectedObject()">to SElected Image</button>

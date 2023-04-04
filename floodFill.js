@@ -366,6 +366,18 @@ document.getElementById("drawing-mode-selector").onchange = function () {
     }
   }
 
+  // canvas.on('mouse:wheel',async function(opt) {
+  //   // var delta = opt.e.deltaY;
+  //   // var zoom = canvas.getZoom();
+  //   // zoom *= 0.999 ** delta;
+  //   // if (zoom > 20) zoom = 20;
+  //   // if (zoom < 0.01) zoom = 0.01;
+  //   var zoom = 20
+  //   fcanvas.zoomToPoint({ x: opt.e.offsetX, y: opt.e.offsetY }, zoom);
+  //   opt.e.preventDefault();
+  //   opt.e.stopPropagation();
+  // });
+
 function floodFill(enable) {
   if (!enable) {
     fcanvas.off("mouse:down");
@@ -381,17 +393,20 @@ function floodFill(enable) {
     //   fcanvas.isDrawingMode = true;
     return;
   }
-  changeAction("select")
-
+  fcanvas.isDrawingMode = false
   fcanvas.discardActiveObject().renderAll(); // Hide object handles!
   fcanvas.selection = false;
   fcanvas.forEachObject(function (object) {
     object.selectable = false;
   });
-
+  
+  
+  
+  
   fcanvas.on({
     "mouse:down": function (e) {
       var mouse = fcanvas.getPointer(e.e)
+      changeAction("select")
       var mouseX = Math.round(mouse.x)
       canvas = fcanvas.lowerCanvasEl
       canvas.fillColor = "green"
