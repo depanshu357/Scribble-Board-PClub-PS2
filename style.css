@@ -5,7 +5,7 @@
   padding: 0px;
   box-sizing: border-box;
   font-family: 'Poppins', sans-serif;
-  border-radius: 13px;
+  border-radius: 6px;
 }
 body{
   display: flex;
@@ -51,7 +51,7 @@ section{
   filter: invert(17%) sepia(90%) saturate(3000%) hue-rotate(900deg) brightness(100%) contrast(100%);
 }
 .option :where(span, label){
-  color: #5A6168;
+  color: white;
   cursor: pointer;
   padding-left: 10px;
 }
@@ -84,7 +84,7 @@ section{
 }
 .colors .option:nth-child(1){
   background-color: #fff;
-  border: 1px solid #bfbfbf;
+  border: 1px solid white;
 }
 .colors .option:nth-child(2){
   background-color: #000;
@@ -136,7 +136,7 @@ section{
   transition: all 0.3s ease;
 }
 .clear-canvas:hover{
-  color: #fff;
+  color: white;
   background: #6C757D;
 }
 .buttons .save-img{
@@ -154,6 +154,7 @@ section{
 }
 .controls:hover{
   color: rgb(8, 128, 183);
+  
 
 }
 .toolsbox3{
@@ -162,7 +163,7 @@ section{
   padding: 20px;
 }
 #container10{
-  border-radius: 5px;
+  border-radius: 8px;
   /* border: 1px solid black; */
   margin: 2rem;
   display: flex;
@@ -186,19 +187,68 @@ section{
   border-color: #000;
 }
 button{
-  margin: 4px;
-  padding: 5px;
+ 
+  display: inline-block;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+  background-color: #4299e1;
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 16px;
+  border-bottom: 4px solid #2b6cb0;
+  font-weight: 700;
+  color: white;
+  line-height: 26px;
+  margin: 2px 0px;
 
 }
 button:hover{
-  background-image: linear-gradient(rgb(187, 116, 248),rgb(210, 119, 241));
-}#table{
-  margin: 1rem;
+  background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+  color: white;
+}
+#table{
+  margin: 10px;
+  height: 100px;
 }
 .controls{
   margin: 1rem;
+  background-color: white;
+  box-shadow: black;
 }
 #options{
-  margin: 3px;
+  margin: 9px;
   padding: 4px;
+}
+#sabkuch{
+  
+  background-color: white;
+  width: 350px;
+  margin: 9px;
+  text-shadow: 1px 1px 2px rgb(152, 238, 238);
+  font-weight: 600;
+  font-style: italic;
+  height: 749px;
+  align-items: center;
+}
+
+#megaboss{
+  margin: 60px 0px;
+  align-items: center;
+}
+.threebar{
+  margin: 1rem;
+}
+#buttons{
+  margin: 1rem;
+}
+
+#drawing-mode-selector{
+  font-weight: 400;
+  font-style: italic;
+  margin: 2rem;
+  font-size: medium;
+}
+button::selection{
+  color: red;
 }
